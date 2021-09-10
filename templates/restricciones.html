@@ -1,0 +1,39 @@
+{% extends "layout.html"%} {% block body%}
+<div class="contenedor_res">
+    <form method="POST" action="{{url_for('realizarProceso')}}">
+        {% for i in range(cantidadRestricciones):%}
+        <div class="grid_form_res">
+            <p>{{i+1}})</p>
+            <input name="X{{i}}" type="text" step="any" required>
+            <p>X +</p>
+            <input name="Y{{i}}" type="text" step="any" required>
+            <p>Y</p>
+            <select class="signo_res" name="S{{i}}">
+                <option value="="> = </option>
+                <option selected value="<="> <= </option>
+                <option value=">="> >= </option>
+            </select>
+            <input name="R{{i}}" type="text" step="any" required>
+        </div>
+        {% endfor%}
+        <div class="flex_res">
+            <p> X,Y ≥ 0</p>
+        </div>
+        <div class="alerta hidden">
+            <p>Error!! formato o caracter no valido</p>
+        </div>
+        <div class="boton_flex_derecha">
+            <div class="ani_boton">
+                <input class="boton" type="submit" value="Obtener gráfica">
+            </div>
+        </div>
+        <div class="hidden">
+            <input type="text" value="{{operacion}}" name="metodo">
+            <input type="text" value="{{funcionObjetivoX}}" name="Xfo">
+            <input type="text" value="{{funcionObjetivoY}}" name="Yfo">
+            <input type="text" value="{{cantidadRestricciones}}" name="cantidadRestricciones">
+        </div>
+    </form>
+</div>
+
+{% endblock%}

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>ProyectoIO</title>
+</head>
+
+<body>
+    <header class="nav_bar">
+        <div class="nav_bar_flex">
+            <div class="navegacion-responsive">
+                <a href="{{url_for('home')}}">
+                    <h1 class="nav_bar_texto "> Proyecto IO</h1>
+                </a>
+                <div class="menu-mobile">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-menu-2" width="32" height="32" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffffff" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <line x1="4" y1="6" x2="20" y2="6" />
+                        <line x1="4" y1="12" x2="20" y2="12" />
+                        <line x1="4" y1="18" x2="20" y2="18" />
+                    </svg>
+                </div>
+            </div>
+            <nav class="navegacion">
+                <a class="enlace_nav" href="{{url_for('metodoGrafico')}}">Método Gráfico</a>
+                <a class="enlace_nav" href="{{url_for('metodoSimplex')}}">Método Simplex</a>
+            </nav>
+        </div>
+    </header>
+    {% block body%} {% endblock%}
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/fracciones.js') }}"></script>
+</body>
+
+</html>
