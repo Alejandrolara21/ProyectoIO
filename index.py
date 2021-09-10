@@ -74,6 +74,8 @@ def realizarProceso():
     aux2 = 0
     aux3 = 0
 
+    print("HoLA")
+
     for i in range(len(arrayFracciones)):
 
         aux1 = str(Fraction(arrayFracciones[i][0]).limit_denominator())
