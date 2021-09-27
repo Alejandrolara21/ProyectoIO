@@ -1,30 +1,5 @@
 from numpy import array
 
-
-def ingresarRestricciones(cantRestricciones,cantVariables):
-    arrayFO = []
-    for i in range(cantVariables):
-        datoFO = float(input(f"Digite valor funcion objetivo X{i}: "))
-        arrayFO.append(datoFO)
-
-    arrayRestricciones = []
-
-    for i in range(cantRestricciones):
-        arrayAux = []
-        for j in range(cantVariables):
-            datoRestricciones = float(input(f"Digite valor Restriccion {i} para la variable X{j}: "))
-            arrayAux.append(datoRestricciones)
-
-        signoRestriccion = int(input("Digite el signo >=:1  <=:2  =:3 "))
-        valorRestriccion = float(input("Digite el valor de la restriccion: "))
-
-        arrayAux.append(signoRestriccion)
-        arrayAux.append(valorRestriccion)
-        arrayRestricciones.append(arrayAux)
-    
-    return arrayFO, arrayRestricciones
-
-
 # Se genenran los arreglos en 0 segun el tipo
 # Tipo = 1 => Filas y columnas
 # Tipo = 2 => Filas
@@ -48,28 +23,67 @@ def crearMatrizCeros(filas,columnas,tipo):
 
     return array
 
-def definirMatriz(arrayRestricciones, variables, restricciones):
-    cantColumnas= 0
+# Permite obtener los valores del arreglo ZjCj
+def hallarZjCj(arrayCx,arrayCxCj,arrayCj):
+    arrayZjCj = [] 
+    for j in range(len(arrayCj)):
+        sumador = 0
+        for i in range(len(arrayCx)):
+            sumador += arrayCxCj[i]*arrayCx[i][j]     
+        arrayZjCj.append(sumador-arrayCj[j])
+    return arrayZjCj
+
+# Permite obtener el valor de Z
+def hallarZ(arrayBi,arrayCxCj):
+    sumador = 0
+    for i in range(len(arrayBi)):
+        sumador+= (arrayBi[i]*arrayCxCj[i])
+    return sumador
+
+# Funcion que permite recibir los valores de las restricciones y variables
+def ingresarRestricciones(cantRestricciones,cantVariables):
+    arrayFO = []
+    for i in range(cantVariables):
+        datoFO = float(input(f"Digite valor funcion objetivo X{i}: "))
+        arrayFO.append(datoFO)
+
+    arrayRestricciones = []
+
+    for i in range(cantRestricciones):
+        arrayAux = []
+        for j in range(cantVariables):
+            datoRestricciones = float(input(f"Digite valor Restriccion {i} para la variable X{j}: "))
+            arrayAux.append(datoRestricciones)
+
+        signoRestriccion = int(input("Digite el signo >=:1  <=:2  =:3 "))
+        valorRestriccion = float(input("Digite el valor de la restriccion: "))
+
+        arrayAux.append(signoRestriccion)
+        arrayAux.append(valorRestriccion)
+        arrayRestricciones.append(arrayAux)
+
+    return arrayFO, arrayRestricciones
+
+# Permite crear la el arreglo Cx con los valores de las variables y sus variables de holgura, superavit y variables artificiales
+def definirMatrizInicial(arrayRestricciones, variables, restricciones):
+    
+    cantColumnas = 0
     cantFilas = 0
     cantVariablesArtificiales = 0
     arrayNormalizado = []
-    arrayFinal = []
-    # Obteniendo filas y columnasvariables
+    arrayCx = []
+
+    # Obteniendo filas y columnas para las varibles de holgura, superavit y artificiales
     cantFilas = restricciones
 
     for i in range(len(arrayRestricciones)):
-        #Obtenemos el signo
+        #Obtenemos el signo >= para aumentar el tamaño de columnas
         if arrayRestricciones[i][variables] == 1:
             cantVariablesArtificiales+=1
     cantColumnas = restricciones + cantVariablesArtificiales
 
-    #arrayNormalizado = crearMatrizCeros(cantFilas,cantColumnas,1)
-    for i in range(cantFilas):
-        arrayAux = []
-        for j in range(cantColumnas):
-            arrayAux.append(0)
-        arrayNormalizado.append(arrayAux)
-
+    #Llamamos la funcion crearMatrizCeros para crear un arreglo en 0 con el tamaño de filas y columnas que se envian
+    arrayNormalizado = crearMatrizCeros(cantFilas,cantColumnas,1)
 
     # Asignar 1 a la matriz
     # -1 cuando es >= y se agrega 1 a la variable artificial
@@ -77,7 +91,6 @@ def definirMatriz(arrayRestricciones, variables, restricciones):
 
     for i in range(len(arrayNormalizado)):
         for j in range(len(arrayNormalizado[i])):
-            arrayAux = []
             if i == j:
                 if arrayRestricciones[i][variables] == 1:
                     arrayNormalizado[i][j] = 1
@@ -95,16 +108,22 @@ def definirMatriz(arrayRestricciones, variables, restricciones):
 
         for k in range(len(arrayNormalizado[i])):
             arrayAuxFilas.append(arrayNormalizado[i][k])
-        arrayFinal.append(arrayAuxFilas)
+        arrayCx.append(arrayAuxFilas)
 
+    #A la cantidad de las columnas se le suma la cantidad de variables para tener el tamaño completo de la matriz
     cantColumnas += variables
-    return arrayFinal,cantVariablesArtificiales,cantFilas,cantColumnas
 
-def definirArrayCx(arrayRestricciones, restricciones,cantVariablesArtificiales,variables):
+    return arrayCx,cantVariablesArtificiales,cantFilas,cantColumnas
+
+# Esta funcion permite crear los arreglos que guardaran diferente informacion
+# Los arreglos creados son: arrayNombreVariables,arrayXb,arrayBi,arrayCj,arrayCxCj. 
+def definirArreglosInicialesTabla(arrayRestricciones, restricciones,cantVariablesArtificiales,variables):
+
+    #Contadores que permiten saber el numero de la variable de holgura (H), superavit (S) y artificil (R)
     contR= 1
     contS= 1
     contH= 1
-
+    #indice para las posicion de las variables de superavit que se pondran en el final
     indiceRestricciones = 0 + variables
     indiceS = 0 + variables
 
@@ -115,13 +134,11 @@ def definirArrayCx(arrayRestricciones, restricciones,cantVariablesArtificiales,v
     arrayCj = []
     arrayCxCj = []
 
-
-    for i in range(tamArray):
-        arrayNombreVariables.append(0)
-        arrayCj.append(0)
+    arrayCj = crearMatrizCeros(restricciones,tamArray,3)
+    arrayNombreVariables = crearMatrizCeros(restricciones,tamArray,3)
     
     for i in range(variables):
-        arrayNombreVariables[i] = f'X{i}'
+        arrayNombreVariables[i] = f'X{i+1}'
 
     for i in range(len(arrayRestricciones)):
         R = ""
@@ -167,26 +184,7 @@ def definirArrayCx(arrayRestricciones, restricciones,cantVariablesArtificiales,v
 
     return arrayNombreVariables,arrayXb,arrayBi,arrayCj,arrayCxCj
 
-def hallarZjCj(arrayCx,arrayCxCj,arrayCj):
-    
-    arrayZjCj = [] 
-    for j in range(len(arrayCj)):
-        sumador = 0
-        for i in range(len(arrayCx)):
-            sumador += arrayCxCj[i]*arrayCx[i][j]
-        
-        arrayZjCj.append(sumador-arrayCj[j])
-
-
-    return arrayZjCj
-
-def hallarZ(arrayBi,arrayCxCj):
-    sumador = 0
-    for i in range(len(arrayBi)):
-        sumador+= (arrayBi[i]*arrayCxCj[i])
-
-    return sumador
-
+# Obtiene el punto pivote de la tabla cuando la operacion es minimizacion
 def puntoPivoteMinimizacion(arrayBi, arrayCx,arrayZjCj):
     valor= max(arrayZjCj)
     columna = arrayZjCj.index(valor)
@@ -197,46 +195,53 @@ def puntoPivoteMinimizacion(arrayBi, arrayCx,arrayZjCj):
 
     valor = min(arrayAuxFila)
     fila = arrayAuxFila.index(valor)
-
     return fila,columna
 
-def llenarDatosTablas(arrayCj,arrayNombreVariables,arrayXb,arrayCx,arrayZjCj,arrayCxCj,arrayBi,filaPivote,columnaPivote,valorPivote,arrayAuxTablas,posTabla):
-    
-    #LLENAR ARREGLO DE CX y Bi
+# Validar si continua realizando las tablas para la operacion minimizacion
+def validarZjCjMinimizacion(arrayZjCj):
+    contArrayZjCJPositivos = 0
+    for i in range(len(arrayZjCj)):
+        if(arrayZjCj[i]>0):
+            contArrayZjCJPositivos +=1
+    return contArrayZjCJPositivos
+
+#Funcion que genera las tablas que se van formando de las tablas anteriores haciendo gauss jordan
+def llenarDatosTablasFase1Minimizacion(arrayCj,arrayNombreVariables,arrayXb,arrayCx,arrayZjCj,arrayCxCj,arrayBi,filaPivote,columnaPivote,valorPivote,arrayAuxTablas,posTabla):
+    #LLENAR ARREGLO DE Cx y Bi
     for i in range(len(arrayAuxTablas[posTabla][1])):
         if(i == filaPivote):
             for j in range(len(arrayAuxTablas[posTabla][1][i])):
                 arrayCx[i][j] = arrayAuxTablas[posTabla][1][i][j]/valorPivote
-
             arrayBi[i] = arrayAuxTablas[posTabla][3][i]/valorPivote
-
-    
-
     for i in range(len(arrayAuxTablas[posTabla][1])):
         if(i != filaPivote):
-            datoPasarCero = (arrayAuxTablas[posTabla][1][i][columnaPivote] *-1)        
+            datoPasarCero = (arrayAuxTablas[posTabla][1][i][columnaPivote] *-1)
             for j in range(len(arrayAuxTablas[posTabla][1][i])):
                 arrayCx[i][j] = (arrayCx[filaPivote][j]*datoPasarCero)+arrayAuxTablas[posTabla][1][i][j]
-
-            arrayBi[i] = (arrayCx[filaPivote][j]*datoPasarCero)+arrayAuxTablas[posTabla][1][i][j]
-            
+            arrayBi[i] = (arrayBi[filaPivote]*datoPasarCero)+arrayAuxTablas[posTabla][3][i]
 
     #SOBREESCRBIR ARREGLO Xb
-    arrayXb[filaPivote] = arrayNombreVariables[columnaPivote]
+    arrayXb[filaPivote] = arrayNombreVariables[columnaPivote] #######-------------
+    for i in range(len(arrayXb)):
+        if( i != filaPivote):
+            arrayXb[i] = arrayAuxTablas[posTabla][2][i]
 
     #SOBRESCRIBIR ARREGLO CxCj
     arrayCxCj[filaPivote] = arrayCj[columnaPivote]
+    for i in range(len(arrayCxCj)):
+        if( i != filaPivote):
+            arrayCxCj[i] = arrayAuxTablas[posTabla][5][i]
 
+    #HALLAR ZjCj
+    auxArrayZjCj = []
     auxArrayZjCj = hallarZjCj(arrayCx,arrayCxCj,arrayCj)
-
     for i in range(len(auxArrayZjCj)):
         arrayZjCj[i]=auxArrayZjCj[i]
 
+    #HALLAR Z
     resultadoZ = hallarZ(arrayBi,arrayCxCj)
-
+    
     return arrayCj,arrayNombreVariables,arrayXb,arrayCx,arrayZjCj,arrayCxCj,arrayBi,resultadoZ
-
-
 
 if __name__ == "__main__":
     #print("--------------")
@@ -250,15 +255,15 @@ if __name__ == "__main__":
     arrayFO, arrayRestricciones = ingresarRestricciones(restricciones,variables)
 
     #FASE 1
-    arrayCx,cantVariablesArtificiales,filas,columnaFase1 = definirMatriz(arrayRestricciones, variables, restricciones)
-    arrayNombreVariables,arrayXb,arrayBi,arrayCj,arrayCxCj = definirArrayCx(arrayRestricciones, restricciones, cantVariablesArtificiales, variables)
+    arrayCx,cantVariablesArtificiales,filas,columnaFase1 = definirMatrizInicial(arrayRestricciones, variables, restricciones)
+    arrayNombreVariables,arrayXb,arrayBi,arrayCj,arrayCxCj = definirArreglosInicialesTabla(arrayRestricciones, restricciones, cantVariablesArtificiales, variables)
     arrayZjCj = hallarZjCj(arrayCx,arrayCxCj,arrayCj)
     resultadoZ = hallarZ(arrayBi,arrayCxCj)
 
-    arrayAuxTablas.append([arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ])
+    arrayAuxGuardarTabla = []
+    arrayAuxGuardarTabla = [arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ]
+    arrayAuxTablas.append(arrayAuxGuardarTabla)
     posTabla = 0
-
-
     if(resultadoZ == 0):
        #2fase
 
@@ -267,39 +272,27 @@ if __name__ == "__main__":
         #Minimizacion
         if(operacion == 2):
             #validar si hay puntos positivos en el arreglo ZjCj
-            contArrayZjCJPositivos = 0
-            for i in range(len(arrayZjCj)):
-                if(arrayZjCj[i]>0):
-                    contArrayZjCJPositivos +=1
-
+            contArrayZjCJPositivos = validarZjCjMinimizacion(arrayZjCj)
             #Realiza las tablas mientras que haya puntos positivos
             while(contArrayZjCJPositivos > 0):
                 filaPivote,columnaPivote = puntoPivoteMinimizacion(arrayBi,arrayCx,arrayZjCj)
 
                 valorPivote = arrayCx[filaPivote][columnaPivote]
                 arrayCx = crearMatrizCeros(filas,columnaFase1,1)
-                arrayZjCJ = crearMatrizCeros(filas,columnaFase1,3)
+                arrayZjCj = crearMatrizCeros(filas,columnaFase1,3)
                 arrayCxCj = crearMatrizCeros(filas,columnaFase1,2)
                 arrayBi = crearMatrizCeros(filas,columnaFase1,2)
+                arrayXb = crearMatrizCeros(filas,columnaFase1,2)
 
-                arrayCj,arrayNombreVariables,arrayXb,arrayCx,arrayZjCj,arrayCxCj,arrayBi,resultadoZ =llenarDatosTablas(arrayCj,arrayNombreVariables,arrayXb,arrayCx,arrayZjCj,arrayCxCj,arrayBi,filaPivote,columnaPivote,valorPivote,arrayAuxTablas,posTabla)
-                contArrayZjCJPositivos = 0
-                for i in range(len(arrayZjCj)):
-                    if(arrayZjCj[i]>0):
-                        contArrayZjCJPositivos +=1
+                arrayCj,arrayNombreVariables,arrayXb,arrayCx,arrayZjCj,arrayCxCj,arrayBi,resultadoZ =llenarDatosTablasFase1Minimizacion(arrayCj,arrayNombreVariables,arrayXb,arrayCx,arrayZjCj,arrayCxCj,arrayBi,filaPivote,columnaPivote,valorPivote,arrayAuxTablas,posTabla)
                 
-                arrayAuxTablas.append([arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ])
+                arrayAuxGuardarTabla = []
+                arrayAuxGuardarTabla = [arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ]
+                arrayAuxTablas.append(arrayAuxGuardarTabla)
                 posTabla += 1
+                contArrayZjCJPositivos = validarZjCjMinimizacion(arrayZjCj)
 
-                print(posTabla)
-                print(arrayAuxTablas);
-
-
+            print(arrayAuxTablas)
 
             if(resultadoZ == 0):
                 print("entro")
-
-
-#### #
-
-#### SOLUCIONAR ARREGLO Bi y CxCj para los resultados............
