@@ -4,12 +4,13 @@ from matplotlib import pyplot as plt
 plt.switch_backend('agg')
 
 from MetodoGrafico import *
+from MetodoSimplexDosFases import *
 
 app = Flask(__name__)
 
 @app.route('/')
 def home():
-    if len(glob.glob("static/img/*.jpg")) > 5:
+    if len(glob.glob("static/img/*.jpg")) > 10:
         for archivo in glob.glob("static/img/*.jpg"):
             try:
                 remove(archivo)
@@ -18,13 +19,36 @@ def home():
                 
     return render_template("index.html")
 
+@app.route('/metodoSimplexDosFases')
+def metodoSimplexDosFases():
+    return render_template("metodoSimplexDosFases.html")
+
+@app.route('/procesarDosFases', methods=['GET'])
+def procesarDosFases():
+    operacion = 0
+    cantidadRestricciones = 0
+    cantidadVariables = 0
+
+    operacion = request.args.get("metodo")
+    cantidadRestricciones = int(request.args.get("restricciones"))
+    cantidadVariables = int(request.args.get("variables"))
+
+
+    return render_template("restriccionesDosFases.html", cantidadRestricciones=cantidadRestricciones, operacion=operacion,cantidadVariables=cantidadVariables)
+
+@app.route('/realizarProcesoDosFases',methods=['POST'])
+def realizarProcesoDosFases():
+    cantidadRestricciones = int(request.form.get("cantidadRestricciones"))
+    cantidadVariables = int(request.form.get("cantidadVariables"))
+    operacion = request.form.get("metodo")
+
+    arrayFO, arrayRestricciones = ingresarRestricciones(cantidadRestricciones,cantidadVariables)
+
+    return render_template("dosFases.html",arrayFO=arrayFO,arrayRestricciones=arrayRestricciones,operacion=operacion)
+
 @app.route('/metodoGrafico')
 def metodoGrafico():
     return render_template("metodoGrafico.html")    
-
-@app.route('/metodoSimplex')
-def metodoSimplex():
-    return render_template("metodoSimplex.html")
 
 @app.route('/procesar', methods=['GET'])
 def procesar():
@@ -53,8 +77,6 @@ def realizarProceso():
     funcionObjetivoY = request.form.get("Yfo")
 
     nombreImagen = 0
-    nombreImagenAnterior = 0
-    tmayor = False
     arrayRestricciones = []
     arrayValorObjetivo = []
     arrayCategoriaFO = []

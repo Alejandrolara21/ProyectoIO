@@ -1,0 +1,41 @@
+{% extends "layout.html"%} {% block body%}
+<div class="video">
+    <div class="titulo_overlay">
+        <div class="contenedor contenido_video">
+            <h2 class="texto_video">Método Dos Fases</h2>
+        </div>
+    </div>
+    <video autoplay muted loop>
+        <source src="static/img/video2.mp4" type="video/mp4">
+    </video>
+</div>
+<div class="contenedor">
+    <div class="metodo_fo_res">
+        <form method="GET" action="{{url_for('procesarDosFases')}}">
+            <div class="grid_form">
+                <label class="texto_form">Numero Variables:</label>
+                <input class="input_res" name="variables" type="number" placeholder="variables" required>
+            </div>
+            <div class="grid_form">
+                <label class="texto_form" for="restricciones">Numero Restricciones:</label>
+                <input class="input_res" name="restricciones" type="number" placeholder="restricciones" required>
+            </div>
+            <div class="grid_form">
+                <label class="texto_form" for="metodo">Método Objetivo:</label>
+                <select class="t_metodo" name="metodo" required>
+                    <option value="1" selected>Maximizar</option>
+                    <option value="2">Minimizar</option>
+                </select>
+            </div>
+            <div class="alerta hidden">
+                <p>Error!! formato o caracter no valido</p>
+            </div>
+            <div class="flex_centro">
+                <div class="ani_boton">
+                    <input class="boton" type="submit" value="Siguiente">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock%}
