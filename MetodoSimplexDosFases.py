@@ -270,7 +270,7 @@ def eliminarColumnaR(arrayTabla,arrayFO,variables):
     arrayIndicesBorrar = []
 
     for i in range(len(arrayTabla[4])):
-        if(arrayTabla[4][i] == 1):
+        if(arrayTabla[4][i] == 1 or arrayTabla[4][i] == -1):
             arrayIndicesBorrar.append(i)
 
     columnas = len(arrayTabla[4]) - len(arrayIndicesBorrar)
@@ -365,7 +365,7 @@ def fase2Maximizacion(resultadoZ,arrayAuxGuardarTabla,arrayXb,arrayBi,arrayFO,va
         arrayTablasFaseDos.append(arrayAuxGuardarTabla)
 
         contArrayZjCJPositivos = validarZjCjMaximizacion(arrayZjCj)
-
+        contBand = 0
         while(contArrayZjCJPositivos > 0):
             filaPivote,columnaPivote = puntoPivoteMaximizacion(arrayBi,arrayCx,arrayZjCj)
 
@@ -382,8 +382,12 @@ def fase2Maximizacion(resultadoZ,arrayAuxGuardarTabla,arrayXb,arrayBi,arrayFO,va
             arrayAuxGuardarTabla = [arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ]
             arrayTablasFaseDos.append(arrayAuxGuardarTabla)
             posTablaFase2 += 1
+            contBand += 1
             #validar si hay puntos positivos en el arreglo ZjCj
             contArrayZjCJPositivos = validarZjCjMaximizacion(arrayZjCj)
+
+            if(contBand == 4):
+                contArrayZjCJPositivos = 0
     else:
         mensaje ="problema indefinido, sin solucion"
     
@@ -513,3 +517,7 @@ if __name__ == "__main__":
             #FASE 2
             mensaje,arrayTablasFase2 = fase2Minimizacion(resultadoZ,arrayUltimaTablaFase1,arrayXb,arrayBi,arrayFO,variables,filas)
             print(arrayTablasFase2)
+
+        
+
+##### SOLUCIONAR PIVOTE DE MAXIMIZACION #####
