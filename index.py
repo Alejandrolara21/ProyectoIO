@@ -38,13 +38,52 @@ def procesarDosFases():
 
 @app.route('/realizarProcesoDosFases',methods=['POST'])
 def realizarProcesoDosFases():
+    arrayTablasFase1 = []
+    arrayRestricciones = []
+    arrayFO = []
+
     cantidadRestricciones = int(request.form.get("cantidadRestricciones"))
     cantidadVariables = int(request.form.get("cantidadVariables"))
-    operacion = request.form.get("metodo")
+    operacion = int(request.form.get("metodo"))
 
     arrayFO, arrayRestricciones = ingresarRestricciones(cantidadRestricciones,cantidadVariables)
+    arrayCx,cantVariablesArtificiales,filas,columnaFase1 = definirMatrizInicial(arrayRestricciones, cantidadVariables, cantidadRestricciones)
+    arrayNombreVariables,arrayXb,arrayBi,arrayCj,arrayCxCj = definirArreglosInicialesTabla(arrayRestricciones, cantidadRestricciones, cantVariablesArtificiales, cantidadVariables,operacion)
+    arrayZjCj = hallarZjCj(arrayCx,arrayCxCj,arrayCj)
+    resultadoZ = hallarZ(arrayBi,arrayCxCj)
+    
+    arrayUltimaTablaFase1 = []
+    arrayUltimaTablaFase1 = [arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ]
+    arrayTablasFase1.append(arrayUltimaTablaFase1)
+    posTablaFase1 = 0
 
-    return render_template("dosFases.html",arrayFO=arrayFO,arrayRestricciones=arrayRestricciones,operacion=operacion)
+    if(resultadoZ == 0):
+        #FASE 1
+        if(operacion ==1):
+            #Maximizacion
+            #FASE 2
+            mensaje,arrayTablasFase2 = fase2Maximizacion(resultadoZ,arrayUltimaTablaFase1,arrayXb,arrayBi,arrayFO,cantidadVariables,filas)
+        elif(operacion == 2):
+            #Minimizacion
+            #FASE 2
+            mensaje,arrayTablasFase2 = fase2Minimizacion(resultadoZ,arrayUltimaTablaFase1,arrayXb,arrayBi,arrayFO,cantidadVariables,filas)
+    else:
+        #FASE 1
+        if(operacion ==1):
+            #Maximizacion
+            contArrayZjCJPositivos = validarZjCjMaximizacion(arrayZjCj)
+            arrayUltimaTablaFase1,arrayTablasFase1,arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ = fase1Maximizacion(contArrayZjCJPositivos,posTablaFase1,arrayBi,arrayCx,arrayZjCj,arrayCj,arrayNombreVariables,arrayTablasFase1,filas,columnaFase1)
+            #FASE 2
+            mensaje,arrayTablasFase2 = fase2Maximizacion(resultadoZ,arrayUltimaTablaFase1,arrayXb,arrayBi,arrayFO,cantidadVariables,filas)
+        elif(operacion == 2):
+            #Minimizacion
+            #validar si hay puntos positivos en el arreglo ZjCj
+            contArrayZjCJPositivos = validarZjCjMinimizacion(arrayZjCj)
+            arrayUltimaTablaFase1,arrayTablasFase1,arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ = fase1Minimizacion(contArrayZjCJPositivos,posTablaFase1,arrayBi,arrayCx,arrayZjCj,arrayCj,arrayNombreVariables,arrayTablasFase1,filas,columnaFase1)
+            #FASE 2
+            mensaje,arrayTablasFase2 = fase2Minimizacion(resultadoZ,arrayUltimaTablaFase1,arrayXb,arrayBi,arrayFO,cantidadVariables,filas)
+
+    return render_template("dosFases.html",arrayTablasFase1=arrayTablasFase1,arrayTablasFase2=arrayTablasFase2,mensaje=mensaje,arrayFO=arrayFO)
 
 @app.route('/metodoGrafico')
 def metodoGrafico():

@@ -2,6 +2,7 @@ from flask import request
 import numpy as np
 
 def pasarFraccionDecimal(dato):
+    dato = str(dato)
     valor = 0
     if("/" in dato):
         dato = dato.split("/")
@@ -69,14 +70,15 @@ def ingresarRestricciones(cantRestricciones,cantVariables):
         arrayAux = []
         for j in range(cantVariables):
             datoRestricciones = request.form.get(f'R{i}_V{j}')
-            datoFO = round(pasarFraccionDecimal(datoFO), 9)
+            datoRestricciones = round(pasarFraccionDecimal(datoRestricciones), 9)
 
             arrayAux.append(float(datoRestricciones))
 
         signoRestriccion = request.form.get(f'S{i}')
         valorRestriccion = request.form.get(f'V{i}')
+        valorRestriccion = round(pasarFraccionDecimal(valorRestriccion), 9)
 
-        arrayAux.append(signoRestriccion)
+        arrayAux.append(int(signoRestriccion))
         arrayAux.append(float(valorRestriccion))
         arrayRestricciones.append(arrayAux)
 
@@ -218,8 +220,12 @@ def puntoPivoteMinimizacion(arrayBi, arrayCx,arrayZjCj):
     arrayAuxFila = []
     
     for i in range(len(arrayCx)):
-        arrayAuxFila.append(arrayBi[i]/arrayCx[i][columna])
-
+        resultado = 0
+        try:
+            resultado = arrayBi[i]/arrayCx[i][columna]
+        except:
+            print("error")
+        arrayAuxFila.append(resultado)
     valorFila =  max(arrayAuxFila)
     fila = arrayAuxFila.index(valorFila)
 
@@ -297,8 +303,6 @@ def eliminarColumnaR(arrayTabla,arrayFO,variables):
     arrayAuxCx = np.delete(arrayAuxCx,(arrayIndicesBorrar),axis=1)
     arrayAuxCj = np.delete(arrayAuxCj,(arrayIndicesBorrar))
     arrayAuxNombreVariables = np.delete(arrayAuxNombreVariables,(arrayIndicesBorrar))
-    for i in range(variables):
-        arrayAuxCj[i] = arrayFO[i]
 
     arrayCj = []
     arrayCx = []
@@ -307,6 +311,9 @@ def eliminarColumnaR(arrayTabla,arrayFO,variables):
     for i in range(len(arrayAuxCj)):
         arrayCj.append(arrayAuxCj[i])
         arrayNombreVariables.append(arrayAuxNombreVariables[i])
+
+    for i in range(len(arrayFO)):
+        arrayCj[i] = arrayFO[i]
 
     for i in range(len(arrayAuxCx)):
         auxColumna = []
@@ -360,7 +367,8 @@ def fase2Minimizacion(resultadoZ,arrayAuxGuardarTabla,arrayXb,arrayBi,arrayFO,va
             #validar si hay puntos positivos en el arreglo ZjCj
             contArrayZjCJPositivos = validarZjCjMinimizacion(arrayZjCj)
     else:
-        mensaje ="problema indefinido, sin solucion"
+        mensaje ="Problema indefinido, sin solucion"
+        arrayTablasFaseDos = []
     
     return mensaje,arrayTablasFaseDos
 
@@ -502,37 +510,37 @@ def validarZjCjMaximizacion(arrayZjCj):
 #     arrayTablasFase1.append(arrayUltimaTablaFase1)
 #     posTablaFase1 = 0
 
-#     if(resultadoZ == 0):
-#         #FASE 1
-#         if(operacion ==1):
-#             #Maximizacion
-#             #FASE 2
-#             mensaje,arrayTablasFase2 = fase2Maximizacion(resultadoZ,arrayUltimaTablaFase1,arrayXb,arrayBi,arrayFO,variables,filas)
-#             print(arrayTablasFase2)
-#         elif(operacion == 2):
-#             #Minimizacion
-#             #FASE 2
-#             mensaje,arrayTablasFase2 = fase2Minimizacion(resultadoZ,arrayUltimaTablaFase1,arrayXb,arrayBi,arrayFO,variables,filas)
-#             print(arrayTablasFase2)
-#     else:
-#         #FASE 1
-#         if(operacion ==1):
-#             #Maximizacion
-#             contArrayZjCJPositivos = validarZjCjMaximizacion(arrayZjCj)
-#             arrayUltimaTablaFase1,arrayTablasFase1,arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ = fase1Maximizacion(contArrayZjCJPositivos,posTablaFase1,arrayBi,arrayCx,arrayZjCj,arrayCj,arrayNombreVariables,arrayTablasFase1,filas,columnaFase1)
-#             print(arrayTablasFase1)
-#             #FASE 2
-#             mensaje,arrayTablasFase2 = fase2Maximizacion(resultadoZ,arrayUltimaTablaFase1,arrayXb,arrayBi,arrayFO,variables,filas)
-#             print(arrayTablasFase2)
-#         elif(operacion == 2):
-#             #Minimizacion
-#             #validar si hay puntos positivos en el arreglo ZjCj
-#             contArrayZjCJPositivos = validarZjCjMinimizacion(arrayZjCj)
-#             arrayUltimaTablaFase1,arrayTablasFase1,arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ = fase1Minimizacion(contArrayZjCJPositivos,posTablaFase1,arrayBi,arrayCx,arrayZjCj,arrayCj,arrayNombreVariables,arrayTablasFase1,filas,columnaFase1)
-#             print(arrayTablasFase1)
-#             #FASE 2
-#             mensaje,arrayTablasFase2 = fase2Minimizacion(resultadoZ,arrayUltimaTablaFase1,arrayXb,arrayBi,arrayFO,variables,filas)
-#             print(arrayTablasFase2)
+    # if(resultadoZ == 0):
+    #     #FASE 1
+    #     if(operacion ==1):
+    #         #Maximizacion
+    #         #FASE 2
+    #         mensaje,arrayTablasFase2 = fase2Maximizacion(resultadoZ,arrayUltimaTablaFase1,arrayXb,arrayBi,arrayFO,variables,filas)
+    #         print(arrayTablasFase2)
+    #     elif(operacion == 2):
+    #         #Minimizacion
+    #         #FASE 2
+    #         mensaje,arrayTablasFase2 = fase2Minimizacion(resultadoZ,arrayUltimaTablaFase1,arrayXb,arrayBi,arrayFO,variables,filas)
+    #         print(arrayTablasFase2)
+    # else:
+    #     #FASE 1
+    #     if(operacion ==1):
+    #         #Maximizacion
+    #         contArrayZjCJPositivos = validarZjCjMaximizacion(arrayZjCj)
+    #         arrayUltimaTablaFase1,arrayTablasFase1,arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ = fase1Maximizacion(contArrayZjCJPositivos,posTablaFase1,arrayBi,arrayCx,arrayZjCj,arrayCj,arrayNombreVariables,arrayTablasFase1,filas,columnaFase1)
+    #         print(arrayTablasFase1)
+    #         #FASE 2
+    #         mensaje,arrayTablasFase2 = fase2Maximizacion(resultadoZ,arrayUltimaTablaFase1,arrayXb,arrayBi,arrayFO,variables,filas)
+    #         print(arrayTablasFase2)
+    #     elif(operacion == 2):
+    #         #Minimizacion
+    #         #validar si hay puntos positivos en el arreglo ZjCj
+    #         contArrayZjCJPositivos = validarZjCjMinimizacion(arrayZjCj)
+    #         arrayUltimaTablaFase1,arrayTablasFase1,arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ = fase1Minimizacion(contArrayZjCJPositivos,posTablaFase1,arrayBi,arrayCx,arrayZjCj,arrayCj,arrayNombreVariables,arrayTablasFase1,filas,columnaFase1)
+    #         print(arrayTablasFase1)
+    #         #FASE 2
+    #         mensaje,arrayTablasFase2 = fase2Minimizacion(resultadoZ,arrayUltimaTablaFase1,arrayXb,arrayBi,arrayFO,variables,filas)
+    #         print(arrayTablasFase2)
 
         
 

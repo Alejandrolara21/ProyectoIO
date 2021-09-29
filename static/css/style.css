@@ -515,3 +515,14 @@ th {
     margin-bottom: 1rem;
     font-size: 2.5rem;
 }
+
+.fila {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    border: 1px solid black;
+}
+
+.fila div p {
+    font-size: 1.3rem;
+}

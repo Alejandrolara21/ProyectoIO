@@ -1,7 +1,92 @@
 {% extends "layout.html"%} {% block body%}
 <div class="contenedor seccion">
-    <p>{{arrayFo}}</p>
-    <p>{{arrayRestricciones}}</p>
-    <p>{{operacion}}</p>
+    <p>FASE 1</p>
+    {% for i in range(arrayTablasFase1 | length):%}
+    <p>TABLA{{i+1}}</p>
+    <table class="tabla_datos">
+        <thead>
+
+        </thead>
+        <tbody>
+            <tr>
+                <td>Cj</td>
+                {% for k in range(arrayTablasFase1[i][4] | length):%}
+                <td>{{arrayTablasFase1[i][4][k]}}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td>Cx</td>
+                {% for k in range(arrayTablasFase1[i][0] | length):%}
+                <td>{{arrayTablasFase1[i][0][k]}}</td>
+                {% endfor %}
+                <td>Xb</td>
+                <td>bi</td>
+            </tr>
+            {% for k in range(arrayTablasFase1[i][5] | length):%}
+            <tr>
+                <td>{{arrayTablasFase1[i][5][k]}}</td>
+                {% for z in range(arrayTablasFase1[i][1][k] | length):%}
+                <td>{{arrayTablasFase1[i][1][k][z]}}</td>
+                {% endfor %}
+                <td>{{arrayTablasFase1[i][2][k]}}</td>
+                <td>{{arrayTablasFase1[i][3][k]}}</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td>Zj-CJ</td>
+                {% for z in range(arrayTablasFase1[i][6] | length):%}
+                <td>{{arrayTablasFase1[i][6][z]}}</td>
+                {% endfor %}
+                <td>Z =</td>
+                <td>{{arrayTablasFase1[i][7]}}</td>
+            </tr>
+        </tbody>
+    </table>
+    {% endfor %}
+
+    <p>FASE 2</p>
+    {% for i in range(arrayTablasFase2 | length):%}
+    <p>TABLA{{i+1}}</p>
+    <table class="tabla_datos">
+        <thead>
+
+        </thead>
+        <tbody>
+            <tr>
+                <td>Cj</td>
+                {% for k in range(arrayTablasFase2[i][4] | length):%}
+                <td>{{arrayTablasFase2[i][4][k]}}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td>Cx</td>
+                {% for k in range(arrayTablasFase2[i][0] | length):%}
+                <td>{{arrayTablasFase2[i][0][k]}}</td>
+                {% endfor %}
+                <td>Xb</td>
+                <td>bi</td>
+            </tr>
+            {% for k in range(arrayTablasFase2[i][5] | length):%}
+            <tr>
+                <td>{{arrayTablasFase2[i][5][k]}}</td>
+                {% for z in range(arrayTablasFase2[i][1][k] | length):%}
+                <td>{{arrayTablasFase2[i][1][k][z]}}</td>
+                {% endfor %}
+                <td>{{arrayTablasFase2[i][2][k]}}</td>
+                <td>{{arrayTablasFase2[i][3][k]}}</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td>Zj-CJ</td>
+                {% for z in range(arrayTablasFase2[i][6] | length):%}
+                <td>{{arrayTablasFase2[i][6][z]}}</td>
+                {% endfor %}
+                <td>Z =</td>
+                <td>{{arrayTablasFase2[i][7]}}</td>
+            </tr>
+        </tbody>
+    </table>
+    {% endfor %}
+
 </div>
 {% endblock%}
