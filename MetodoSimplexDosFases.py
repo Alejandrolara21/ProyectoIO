@@ -1,4 +1,3 @@
-from typing import Tuple
 import numpy as np
 
 # Se genenran los arreglos en 0 segun el tipo
@@ -122,8 +121,7 @@ def definirMatrizInicial(arrayRestricciones, variables, restricciones):
 
 # Esta funcion permite crear los arreglos que guardaran diferente informacion
 # Los arreglos creados son: arrayNombreVariables,arrayXb,arrayBi,arrayCj,arrayCxCj. 
-def definirArreglosInicialesTabla(arrayRestricciones, restricciones,cantVariablesArtificiales,variables):
-
+def definirArreglosInicialesTabla(arrayRestricciones, restricciones,cantVariablesArtificiales,variables,operacion):
     #Contadores que permiten saber el numero de la variable de holgura (H), superavit (S) y artificil (R)
     contR= 1
     contS= 1
@@ -154,11 +152,16 @@ def definirArreglosInicialesTabla(arrayRestricciones, restricciones,cantVariable
             S = f'S{contS}'
 
             arrayNombreVariables[indiceRestricciones] = R
-            arrayCj[indiceRestricciones] = 1
+            if(operacion == 1):
+                arrayCj[indiceRestricciones] = -1
+                arrayCxCj.append(-1)
+            elif(operacion == 2):
+                arrayCj[indiceRestricciones] = 1
+                arrayCxCj.append(1)
+            
             arrayNombreVariables[restricciones+indiceS] = S
             arrayCj[restricciones+indiceS] = 0
             arrayXb.append(R)
-            arrayCxCj.append(1)
 
             contR += 1
             contS += 1
@@ -178,9 +181,14 @@ def definirArreglosInicialesTabla(arrayRestricciones, restricciones,cantVariable
         elif(arrayRestricciones[i][variables] == 3):
             R = f'R{contR}'
             arrayNombreVariables[indiceRestricciones] = R
-            arrayCj[indiceRestricciones] = 1
+            if(operacion == 1):
+                arrayCj[indiceRestricciones] = -1
+                arrayCxCj.append(-1)
+            elif(operacion == 2):
+                arrayCj[indiceRestricciones] = 1
+                arrayCxCj.append(1)
             arrayXb.append(R)
-            arrayCxCj.append(1)
+
 
             contR += 1
             indiceRestricciones += 1
@@ -191,7 +199,7 @@ def definirArreglosInicialesTabla(arrayRestricciones, restricciones,cantVariable
 
 # Obtiene el punto pivote de la tabla cuando la operacion es minimizacion
 def puntoPivoteMinimizacion(arrayBi, arrayCx,arrayZjCj):
-    valor= max(arrayZjCj)
+    valor = max(arrayZjCj)
     columna = arrayZjCj.index(valor)
     arrayAuxFila = []
     
@@ -216,7 +224,7 @@ def validarZjCjMinimizacion(arrayZjCj):
     return contArrayZjCJPositivos
 
 #Funcion que genera las tablas que se van formando de las tablas anteriores haciendo gauss jordan
-def llenarDatosTablasFase1Minimizacion(arrayCj,arrayNombreVariables,arrayXb,arrayCx,arrayZjCj,arrayCxCj,arrayBi,filaPivote,columnaPivote,valorPivote,arrayAuxTablas,posTabla):
+def llenarDatosTablas(arrayCj,arrayNombreVariables,arrayXb,arrayCx,arrayZjCj,arrayCxCj,arrayBi,filaPivote,columnaPivote,valorPivote,arrayAuxTablas,posTabla):
     #LLENAR ARREGLO DE Cx y Bi
     for i in range(len(arrayAuxTablas[posTabla][1])):
         if(i == filaPivote):
@@ -228,6 +236,7 @@ def llenarDatosTablasFase1Minimizacion(arrayCj,arrayNombreVariables,arrayXb,arra
     for i in range(len(arrayAuxTablas[posTabla][1])):
         if(i != filaPivote):
             datoPasarCero = (arrayAuxTablas[posTabla][1][i][columnaPivote] *-1)
+
             for j in range(len(arrayAuxTablas[posTabla][1][i])):
                 arrayCx[i][j] = (arrayCx[filaPivote][j]*datoPasarCero)+arrayAuxTablas[posTabla][1][i][j]
                 #arrayCx[i][j] = round(arrayCx[i][j],6)
@@ -294,15 +303,166 @@ def eliminarColumnaR(arrayTabla,arrayFO,variables):
 
 def definirNuevaCxCj(arrayNombreVariables, arrayXb,arrayCj):
     arrayAuxCxCj = [] 
-    for i in range(len(arrayNombreVariables)):
-        for j in range(len(arrayXb)):
+    for j in range(len(arrayXb)):
+        for i in range(len(arrayNombreVariables)):
             if(arrayNombreVariables[i] == arrayXb[j]):
                 arrayAuxCxCj.append(arrayCj[i])
     return arrayAuxCxCj
 
+def fase2Minimizacion(resultadoZ,arrayAuxGuardarTabla,arrayXb,arrayBi,arrayFO,variables,filas):
+    mensaje= ""
+    if(resultadoZ == 0):
+        arrayTablasFaseDos = []
+        posTablaFase2 = 0
+        arrayCj,arrayCx,arrayNombreVariables,columnaFase2 = eliminarColumnaR(arrayAuxGuardarTabla,arrayFO,variables)
+
+        arrayCxCj = definirNuevaCxCj(arrayNombreVariables, arrayXb,arrayCj)
+        arrayZjCj = hallarZjCj(arrayCx,arrayCxCj,arrayCj)
+        resultadoZ = hallarZ(arrayBi,arrayCxCj)
+        
+        arrayAuxGuardarTabla = []
+        arrayAuxGuardarTabla = [arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ]
+        arrayTablasFaseDos.append(arrayAuxGuardarTabla)
+
+        contArrayZjCJPositivos = validarZjCjMinimizacion(arrayZjCj)
+
+        while(contArrayZjCJPositivos > 0):
+            filaPivote,columnaPivote = puntoPivoteMinimizacion(arrayBi,arrayCx,arrayZjCj)
+
+            valorPivote = arrayCx[filaPivote][columnaPivote]
+            arrayCx = crearMatrizCeros(filas,columnaFase2,1)
+            arrayZjCj = crearMatrizCeros(filas,columnaFase2,3)
+            arrayCxCj = crearMatrizCeros(filas,columnaFase2,2)
+            arrayBi = crearMatrizCeros(filas,columnaFase2,2)
+            arrayXb = crearMatrizCeros(filas,columnaFase2,2)
+
+            arrayCj,arrayNombreVariables,arrayXb,arrayCx,arrayZjCj,arrayCxCj,arrayBi,resultadoZ =llenarDatosTablas(arrayCj,arrayNombreVariables,arrayXb,arrayCx,arrayZjCj,arrayCxCj,arrayBi,filaPivote,columnaPivote,valorPivote,arrayTablasFaseDos,posTablaFase2)
+            
+            arrayAuxGuardarTabla = []
+            arrayAuxGuardarTabla = [arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ]
+            arrayTablasFaseDos.append(arrayAuxGuardarTabla)
+            posTablaFase2 += 1
+            #validar si hay puntos positivos en el arreglo ZjCj
+            contArrayZjCJPositivos = validarZjCjMinimizacion(arrayZjCj)
+    else:
+        mensaje ="problema indefinido, sin solucion"
+    
+    return mensaje,arrayTablasFaseDos
+
+def fase2Maximizacion(resultadoZ,arrayAuxGuardarTabla,arrayXb,arrayBi,arrayFO,variables,filas):
+    mensaje= ""
+    if(resultadoZ == 0):
+        arrayTablasFaseDos = []
+        posTablaFase2 = 0
+        arrayCj,arrayCx,arrayNombreVariables,columnaFase2 = eliminarColumnaR(arrayAuxGuardarTabla,arrayFO,variables)
+
+        arrayCxCj = definirNuevaCxCj(arrayNombreVariables, arrayXb,arrayCj)
+        arrayZjCj = hallarZjCj(arrayCx,arrayCxCj,arrayCj)
+        resultadoZ = hallarZ(arrayBi,arrayCxCj)
+        
+        arrayAuxGuardarTabla = []
+        arrayAuxGuardarTabla = [arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ]
+        arrayTablasFaseDos.append(arrayAuxGuardarTabla)
+
+        contArrayZjCJPositivos = validarZjCjMaximizacion(arrayZjCj)
+
+        while(contArrayZjCJPositivos > 0):
+            filaPivote,columnaPivote = puntoPivoteMaximizacion(arrayBi,arrayCx,arrayZjCj)
+
+            valorPivote = arrayCx[filaPivote][columnaPivote]
+            arrayCx = crearMatrizCeros(filas,columnaFase2,1)
+            arrayZjCj = crearMatrizCeros(filas,columnaFase2,3)
+            arrayCxCj = crearMatrizCeros(filas,columnaFase2,2)
+            arrayBi = crearMatrizCeros(filas,columnaFase2,2)
+            arrayXb = crearMatrizCeros(filas,columnaFase2,2)
+
+            arrayCj,arrayNombreVariables,arrayXb,arrayCx,arrayZjCj,arrayCxCj,arrayBi,resultadoZ = llenarDatosTablas(arrayCj,arrayNombreVariables,arrayXb,arrayCx,arrayZjCj,arrayCxCj,arrayBi,filaPivote,columnaPivote,valorPivote,arrayTablasFaseDos,posTablaFase2)
+            
+            arrayAuxGuardarTabla = []
+            arrayAuxGuardarTabla = [arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ]
+            arrayTablasFaseDos.append(arrayAuxGuardarTabla)
+            posTablaFase2 += 1
+            #validar si hay puntos positivos en el arreglo ZjCj
+            contArrayZjCJPositivos = validarZjCjMaximizacion(arrayZjCj)
+    else:
+        mensaje ="problema indefinido, sin solucion"
+    
+    return mensaje,arrayTablasFaseDos
+
+def fase1Minimizacion(contArrayZjCJPositivos,posTablaFase1,arrayBi,arrayCx,arrayZjCj,arrayCj,arrayNombreVariables,arrayAuxTablas,filas,columnaFase1):
+    #Realiza las tablas mientras que haya puntos positivos
+    while(contArrayZjCJPositivos > 0):
+        filaPivote,columnaPivote = puntoPivoteMinimizacion(arrayBi,arrayCx,arrayZjCj)
+
+        valorPivote = arrayCx[filaPivote][columnaPivote]
+        arrayCx = crearMatrizCeros(filas,columnaFase1,1)
+        arrayZjCj = crearMatrizCeros(filas,columnaFase1,3)
+        arrayCxCj = crearMatrizCeros(filas,columnaFase1,2)
+        arrayBi = crearMatrizCeros(filas,columnaFase1,2)
+        arrayXb = crearMatrizCeros(filas,columnaFase1,2)
+
+        arrayCj,arrayNombreVariables,arrayXb,arrayCx,arrayZjCj,arrayCxCj,arrayBi,resultadoZ = llenarDatosTablas(arrayCj,arrayNombreVariables,arrayXb,arrayCx,arrayZjCj,arrayCxCj,arrayBi,filaPivote,columnaPivote,valorPivote,arrayAuxTablas,posTablaFase1)
+        
+        arrayAuxGuardarTabla = []
+        arrayAuxGuardarTabla = [arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ]
+        arrayAuxTablas.append(arrayAuxGuardarTabla)
+        posTablaFase1 += 1
+        #validar si hay puntos positivos en el arreglo ZjCj
+        contArrayZjCJPositivos = validarZjCjMinimizacion(arrayZjCj)
+
+    return arrayAuxGuardarTabla,arrayAuxTablas,arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ
+
+def fase1Maximizacion(contArrayZjCJPositivos,posTablaFase1,arrayBi,arrayCx,arrayZjCj,arrayCj,arrayNombreVariables,arrayAuxTablas,filas,columnaFase1):
+    #Realiza las tablas mientras que haya puntos positivos
+    while(contArrayZjCJPositivos > 0):
+        filaPivote,columnaPivote = puntoPivoteMaximizacion(arrayBi,arrayCx,arrayZjCj)
+
+        valorPivote = arrayCx[filaPivote][columnaPivote]
+        arrayCx = crearMatrizCeros(filas,columnaFase1,1)
+        arrayZjCj = crearMatrizCeros(filas,columnaFase1,3)
+        arrayCxCj = crearMatrizCeros(filas,columnaFase1,2)
+        arrayBi = crearMatrizCeros(filas,columnaFase1,2)
+        arrayXb = crearMatrizCeros(filas,columnaFase1,2)
+
+        arrayCj,arrayNombreVariables,arrayXb,arrayCx,arrayZjCj,arrayCxCj,arrayBi,resultadoZ = llenarDatosTablas(arrayCj,arrayNombreVariables,arrayXb,arrayCx,arrayZjCj,arrayCxCj,arrayBi,filaPivote,columnaPivote,valorPivote,arrayAuxTablas,posTablaFase1)
+        
+        arrayAuxGuardarTabla = []
+        arrayAuxGuardarTabla = [arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ]
+        arrayAuxTablas.append(arrayAuxGuardarTabla)
+        posTablaFase1 += 1
+        #validar si hay puntos positivos en el arreglo ZjCj
+        contArrayZjCJPositivos = validarZjCjMaximizacion(arrayZjCj)
+
+    return arrayAuxGuardarTabla,arrayAuxTablas,arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ
+
+def puntoPivoteMaximizacion(arrayBi,arrayCx,arrayZjCj):
+    valor= min(arrayZjCj)
+    columna = arrayZjCj.index(valor)
+
+    arrayAuxFila = []
+    
+    for i in range(len(arrayCx)):
+        arrayAuxFila.append(arrayBi[i]/arrayCx[i][columna])
+
+    valorFila = arrayAuxFila[0]
+    fila = 0
+
+    for i,valor in reversed(list(enumerate(arrayAuxFila))):
+        if(valor < valorFila and valor > 0):
+            fila = i    
+
+    return fila,columna
+
+def validarZjCjMaximizacion(arrayZjCj):
+    contArrayZjCJPositivos = 0
+    for i in range(len(arrayZjCj)):
+        if(arrayZjCj[i]<0):
+            contArrayZjCJPositivos +=1
+    return contArrayZjCJPositivos
+
 if __name__ == "__main__":
     #print("--------------")
-    arrayAuxTablas = []
+    arrayTablasFase1 = []
     arrayRestricciones = []
     arrayFO = []
 
@@ -313,87 +473,43 @@ if __name__ == "__main__":
 
     #FASE 1
     arrayCx,cantVariablesArtificiales,filas,columnaFase1 = definirMatrizInicial(arrayRestricciones, variables, restricciones)
-    arrayNombreVariables,arrayXb,arrayBi,arrayCj,arrayCxCj = definirArreglosInicialesTabla(arrayRestricciones, restricciones, cantVariablesArtificiales, variables)
+    arrayNombreVariables,arrayXb,arrayBi,arrayCj,arrayCxCj = definirArreglosInicialesTabla(arrayRestricciones, restricciones, cantVariablesArtificiales, variables,operacion)
     arrayZjCj = hallarZjCj(arrayCx,arrayCxCj,arrayCj)
     resultadoZ = hallarZ(arrayBi,arrayCxCj)
 
-    arrayAuxGuardarTabla = []
-    arrayAuxGuardarTabla = [arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ]
-    arrayAuxTablas.append(arrayAuxGuardarTabla)
+    arrayUltimaTablaFase1 = []
+    arrayUltimaTablaFase1 = [arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ]
+    arrayTablasFase1.append(arrayUltimaTablaFase1)
     posTablaFase1 = 0
-    if(resultadoZ == 0):
-       #2fase
 
-       print("entro")
+    if(resultadoZ == 0):
+        #FASE 1
+        if(operacion ==1):
+            #Maximizacion
+            #FASE 2
+            mensaje,arrayTablasFase2 = fase2Maximizacion(resultadoZ,arrayUltimaTablaFase1,arrayXb,arrayBi,arrayFO,variables,filas)
+            print(arrayTablasFase2)
+        elif(operacion == 2):
+            #Minimizacion
+            #FASE 2
+            mensaje,arrayTablasFase2 = fase2Minimizacion(resultadoZ,arrayUltimaTablaFase1,arrayXb,arrayBi,arrayFO,variables,filas)
+            print(arrayTablasFase2)
     else:
         #FASE 1
         if(operacion ==1):
             #Maximizacion
-            print("Entro")
+            contArrayZjCJPositivos = validarZjCjMaximizacion(arrayZjCj)
+            arrayUltimaTablaFase1,arrayTablasFase1,arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ = fase1Maximizacion(contArrayZjCJPositivos,posTablaFase1,arrayBi,arrayCx,arrayZjCj,arrayCj,arrayNombreVariables,arrayTablasFase1,filas,columnaFase1)
+            print(arrayTablasFase1)
+            #FASE 2
+            mensaje,arrayTablasFase2 = fase2Maximizacion(resultadoZ,arrayUltimaTablaFase1,arrayXb,arrayBi,arrayFO,variables,filas)
+            print(arrayTablasFase2)
         elif(operacion == 2):
             #Minimizacion
             #validar si hay puntos positivos en el arreglo ZjCj
             contArrayZjCJPositivos = validarZjCjMinimizacion(arrayZjCj)
-            #Realiza las tablas mientras que haya puntos positivos
-            while(contArrayZjCJPositivos > 0):
-                filaPivote,columnaPivote = puntoPivoteMinimizacion(arrayBi,arrayCx,arrayZjCj)
-
-                valorPivote = arrayCx[filaPivote][columnaPivote]
-                arrayCx = crearMatrizCeros(filas,columnaFase1,1)
-                arrayZjCj = crearMatrizCeros(filas,columnaFase1,3)
-                arrayCxCj = crearMatrizCeros(filas,columnaFase1,2)
-                arrayBi = crearMatrizCeros(filas,columnaFase1,2)
-                arrayXb = crearMatrizCeros(filas,columnaFase1,2)
-
-                arrayCj,arrayNombreVariables,arrayXb,arrayCx,arrayZjCj,arrayCxCj,arrayBi,resultadoZ = llenarDatosTablasFase1Minimizacion(arrayCj,arrayNombreVariables,arrayXb,arrayCx,arrayZjCj,arrayCxCj,arrayBi,filaPivote,columnaPivote,valorPivote,arrayAuxTablas,posTablaFase1)
-                
-                arrayAuxGuardarTabla = []
-                arrayAuxGuardarTabla = [arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ]
-                arrayAuxTablas.append(arrayAuxGuardarTabla)
-                posTablaFase1 += 1
-                #validar si hay puntos positivos en el arreglo ZjCj
-                contArrayZjCJPositivos = validarZjCjMinimizacion(arrayZjCj)
-
-            print(arrayAuxTablas)
-
+            arrayUltimaTablaFase1,arrayTablasFase1,arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ = fase1Minimizacion(contArrayZjCJPositivos,posTablaFase1,arrayBi,arrayCx,arrayZjCj,arrayCj,arrayNombreVariables,arrayTablasFase1,filas,columnaFase1)
+            print(arrayTablasFase1)
             #FASE 2
-            if(resultadoZ == 0):
-                print("entro")
-                arrayTablasFaseDos = []
-                posTablaFase2 = 0
-                arrayCj,arrayCx,arrayNombreVariables,columnaFase2 = eliminarColumnaR(arrayAuxGuardarTabla,arrayFO,variables)
-
-                arrayCxCj = definirNuevaCxCj(arrayNombreVariables, arrayXb,arrayCj)
-                arrayZjCj = hallarZjCj(arrayCx,arrayCxCj,arrayCj)
-                resultadoZ = hallarZ(arrayBi,arrayCxCj)
-                
-                arrayAuxGuardarTabla = []
-                arrayAuxGuardarTabla = [arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ]
-                arrayTablasFaseDos.append(arrayAuxGuardarTabla)
-
-                contArrayZjCJPositivos = validarZjCjMinimizacion(arrayZjCj)
-                print(contArrayZjCJPositivos)
-
-                while(contArrayZjCJPositivos > 0):
-                    print("entro ciclo")
-                    filaPivote,columnaPivote = puntoPivoteMinimizacion(arrayBi,arrayCx,arrayZjCj)
-
-                    valorPivote = arrayCx[filaPivote][columnaPivote]
-                    arrayCx = crearMatrizCeros(filas,columnaFase2,1)
-                    arrayZjCj = crearMatrizCeros(filas,columnaFase2,3)
-                    arrayCxCj = crearMatrizCeros(filas,columnaFase2,2)
-                    arrayBi = crearMatrizCeros(filas,columnaFase2,2)
-                    arrayXb = crearMatrizCeros(filas,columnaFase2,2)
-
-                    arrayCj,arrayNombreVariables,arrayXb,arrayCx,arrayZjCj,arrayCxCj,arrayBi,resultadoZ =llenarDatosTablasFase1Minimizacion(arrayCj,arrayNombreVariables,arrayXb,arrayCx,arrayZjCj,arrayCxCj,arrayBi,filaPivote,columnaPivote,valorPivote,arrayTablasFaseDos,posTablaFase2)
-                    
-                    arrayAuxGuardarTabla = []
-                    arrayAuxGuardarTabla = [arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ]
-                    arrayTablasFaseDos.append(arrayAuxGuardarTabla)
-                    posTablaFase2 += 1
-                    #validar si hay puntos positivos en el arreglo ZjCj
-                    contArrayZjCJPositivos = validarZjCjMinimizacion(arrayZjCj)
-                    print(contArrayZjCJPositivos)
-                print(arrayTablasFaseDos)
-            else:
-                print("problema indefinido, sin solucion")
+            mensaje,arrayTablasFase2 = fase2Minimizacion(resultadoZ,arrayUltimaTablaFase1,arrayXb,arrayBi,arrayFO,variables,filas)
+            print(arrayTablasFase2)
