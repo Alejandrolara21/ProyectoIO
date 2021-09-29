@@ -1,4 +1,5 @@
-from numpy import array
+from typing import Tuple
+import numpy as np
 
 # Se genenran los arreglos en 0 segun el tipo
 # Tipo = 1 => Filas y columnas
@@ -29,7 +30,8 @@ def hallarZjCj(arrayCx,arrayCxCj,arrayCj):
     for j in range(len(arrayCj)):
         sumador = 0
         for i in range(len(arrayCx)):
-            sumador += arrayCxCj[i]*arrayCx[i][j]     
+            sumador += arrayCxCj[i]*arrayCx[i][j]
+            #sumador = round(sumador,6)
         arrayZjCj.append(sumador-arrayCj[j])
     return arrayZjCj
 
@@ -44,7 +46,8 @@ def hallarZ(arrayBi,arrayCxCj):
 def ingresarRestricciones(cantRestricciones,cantVariables):
     arrayFO = []
     for i in range(cantVariables):
-        datoFO = float(input(f"Digite valor funcion objetivo X{i}: "))
+        datoFO = float(input(f"Digite valor funcion objetivo X{i+1}: "))
+        #datoFO = round(datoFO,6)
         arrayFO.append(datoFO)
 
     arrayRestricciones = []
@@ -52,11 +55,13 @@ def ingresarRestricciones(cantRestricciones,cantVariables):
     for i in range(cantRestricciones):
         arrayAux = []
         for j in range(cantVariables):
-            datoRestricciones = float(input(f"Digite valor Restriccion {i} para la variable X{j}: "))
+            datoRestricciones = float(input(f"Digite valor Restriccion {i+1} para la variable X{j+1}: "))
+            #datoRestricciones = round(datoRestricciones,6)
             arrayAux.append(datoRestricciones)
 
         signoRestriccion = int(input("Digite el signo >=:1  <=:2  =:3 "))
         valorRestriccion = float(input("Digite el valor de la restriccion: "))
+        #valorRestriccion = round(valorRestriccion,6)
 
         arrayAux.append(signoRestriccion)
         arrayAux.append(valorRestriccion)
@@ -189,12 +194,17 @@ def puntoPivoteMinimizacion(arrayBi, arrayCx,arrayZjCj):
     valor= max(arrayZjCj)
     columna = arrayZjCj.index(valor)
     arrayAuxFila = []
-
+    
     for i in range(len(arrayCx)):
         arrayAuxFila.append(arrayBi[i]/arrayCx[i][columna])
 
-    valor = min(arrayAuxFila)
-    fila = arrayAuxFila.index(valor)
+    valorFila = arrayAuxFila[0]
+    fila = 0
+
+    for i,valor in reversed(list(enumerate(arrayAuxFila))):
+        if(valor < valorFila and valor > 0):
+            fila = i    
+
     return fila,columna
 
 # Validar si continua realizando las tablas para la operacion minimizacion
@@ -212,14 +222,17 @@ def llenarDatosTablasFase1Minimizacion(arrayCj,arrayNombreVariables,arrayXb,arra
         if(i == filaPivote):
             for j in range(len(arrayAuxTablas[posTabla][1][i])):
                 arrayCx[i][j] = arrayAuxTablas[posTabla][1][i][j]/valorPivote
+                #arrayCx[i][j] = round(arrayCx[i][j],6)
             arrayBi[i] = arrayAuxTablas[posTabla][3][i]/valorPivote
+            #arrayBi[i] = round(arrayBi[i],6)
     for i in range(len(arrayAuxTablas[posTabla][1])):
         if(i != filaPivote):
             datoPasarCero = (arrayAuxTablas[posTabla][1][i][columnaPivote] *-1)
             for j in range(len(arrayAuxTablas[posTabla][1][i])):
                 arrayCx[i][j] = (arrayCx[filaPivote][j]*datoPasarCero)+arrayAuxTablas[posTabla][1][i][j]
+                #arrayCx[i][j] = round(arrayCx[i][j],6)
             arrayBi[i] = (arrayBi[filaPivote]*datoPasarCero)+arrayAuxTablas[posTabla][3][i]
-
+            #arrayBi[i] = round(arrayBi[i],6)
     #SOBREESCRBIR ARREGLO Xb
     arrayXb[filaPivote] = arrayNombreVariables[columnaPivote] #######-------------
     for i in range(len(arrayXb)):
@@ -231,6 +244,7 @@ def llenarDatosTablasFase1Minimizacion(arrayCj,arrayNombreVariables,arrayXb,arra
     for i in range(len(arrayCxCj)):
         if( i != filaPivote):
             arrayCxCj[i] = arrayAuxTablas[posTabla][5][i]
+            #arrayCxCj[i] = round(arrayCxCj[i],6)
 
     #HALLAR ZjCj
     auxArrayZjCj = []
@@ -242,6 +256,49 @@ def llenarDatosTablasFase1Minimizacion(arrayCj,arrayNombreVariables,arrayXb,arra
     resultadoZ = hallarZ(arrayBi,arrayCxCj)
     
     return arrayCj,arrayNombreVariables,arrayXb,arrayCx,arrayZjCj,arrayCxCj,arrayBi,resultadoZ
+
+def eliminarColumnaR(arrayTabla,arrayFO,variables):   
+    arrayIndicesBorrar = []
+
+    for i in range(len(arrayTabla[4])):
+        if(arrayTabla[4][i] == 1):
+            arrayIndicesBorrar.append(i)
+
+    columnas = len(arrayTabla[4]) - len(arrayIndicesBorrar)
+    
+    arrayAuxCj = arrayTabla[4]
+    arrayAuxCx = arrayTabla[1]
+    arrayAuxNombreVariables = arrayTabla[0]
+    
+    arrayAuxCx = np.delete(arrayAuxCx,(arrayIndicesBorrar),axis=1)
+    arrayAuxCj = np.delete(arrayAuxCj,(arrayIndicesBorrar))
+    arrayAuxNombreVariables = np.delete(arrayAuxNombreVariables,(arrayIndicesBorrar))
+    for i in range(variables):
+        arrayAuxCj[i] = arrayFO[i]
+
+    arrayCj = []
+    arrayCx = []
+    arrayNombreVariables = []
+
+    for i in range(len(arrayAuxCj)):
+        arrayCj.append(arrayAuxCj[i])
+        arrayNombreVariables.append(arrayAuxNombreVariables[i])
+
+    for i in range(len(arrayAuxCx)):
+        auxColumna = []
+        for j in range(len(arrayAuxCx[i])):
+            auxColumna.append(arrayAuxCx[i][j])
+        arrayCx.append(auxColumna)
+
+    return arrayCj,arrayCx,arrayNombreVariables,columnas
+
+def definirNuevaCxCj(arrayNombreVariables, arrayXb,arrayCj):
+    arrayAuxCxCj = [] 
+    for i in range(len(arrayNombreVariables)):
+        for j in range(len(arrayXb)):
+            if(arrayNombreVariables[i] == arrayXb[j]):
+                arrayAuxCxCj.append(arrayCj[i])
+    return arrayAuxCxCj
 
 if __name__ == "__main__":
     #print("--------------")
@@ -263,14 +320,18 @@ if __name__ == "__main__":
     arrayAuxGuardarTabla = []
     arrayAuxGuardarTabla = [arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ]
     arrayAuxTablas.append(arrayAuxGuardarTabla)
-    posTabla = 0
+    posTablaFase1 = 0
     if(resultadoZ == 0):
        #2fase
 
        print("entro")
     else:
-        #Minimizacion
-        if(operacion == 2):
+        #FASE 1
+        if(operacion ==1):
+            #Maximizacion
+            print("Entro")
+        elif(operacion == 2):
+            #Minimizacion
             #validar si hay puntos positivos en el arreglo ZjCj
             contArrayZjCJPositivos = validarZjCjMinimizacion(arrayZjCj)
             #Realiza las tablas mientras que haya puntos positivos
@@ -284,15 +345,55 @@ if __name__ == "__main__":
                 arrayBi = crearMatrizCeros(filas,columnaFase1,2)
                 arrayXb = crearMatrizCeros(filas,columnaFase1,2)
 
-                arrayCj,arrayNombreVariables,arrayXb,arrayCx,arrayZjCj,arrayCxCj,arrayBi,resultadoZ =llenarDatosTablasFase1Minimizacion(arrayCj,arrayNombreVariables,arrayXb,arrayCx,arrayZjCj,arrayCxCj,arrayBi,filaPivote,columnaPivote,valorPivote,arrayAuxTablas,posTabla)
+                arrayCj,arrayNombreVariables,arrayXb,arrayCx,arrayZjCj,arrayCxCj,arrayBi,resultadoZ = llenarDatosTablasFase1Minimizacion(arrayCj,arrayNombreVariables,arrayXb,arrayCx,arrayZjCj,arrayCxCj,arrayBi,filaPivote,columnaPivote,valorPivote,arrayAuxTablas,posTablaFase1)
                 
                 arrayAuxGuardarTabla = []
                 arrayAuxGuardarTabla = [arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ]
                 arrayAuxTablas.append(arrayAuxGuardarTabla)
-                posTabla += 1
+                posTablaFase1 += 1
+                #validar si hay puntos positivos en el arreglo ZjCj
                 contArrayZjCJPositivos = validarZjCjMinimizacion(arrayZjCj)
 
             print(arrayAuxTablas)
 
+            #FASE 2
             if(resultadoZ == 0):
                 print("entro")
+                arrayTablasFaseDos = []
+                posTablaFase2 = 0
+                arrayCj,arrayCx,arrayNombreVariables,columnaFase2 = eliminarColumnaR(arrayAuxGuardarTabla,arrayFO,variables)
+
+                arrayCxCj = definirNuevaCxCj(arrayNombreVariables, arrayXb,arrayCj)
+                arrayZjCj = hallarZjCj(arrayCx,arrayCxCj,arrayCj)
+                resultadoZ = hallarZ(arrayBi,arrayCxCj)
+                
+                arrayAuxGuardarTabla = []
+                arrayAuxGuardarTabla = [arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ]
+                arrayTablasFaseDos.append(arrayAuxGuardarTabla)
+
+                contArrayZjCJPositivos = validarZjCjMinimizacion(arrayZjCj)
+                print(contArrayZjCJPositivos)
+
+                while(contArrayZjCJPositivos > 0):
+                    print("entro ciclo")
+                    filaPivote,columnaPivote = puntoPivoteMinimizacion(arrayBi,arrayCx,arrayZjCj)
+
+                    valorPivote = arrayCx[filaPivote][columnaPivote]
+                    arrayCx = crearMatrizCeros(filas,columnaFase2,1)
+                    arrayZjCj = crearMatrizCeros(filas,columnaFase2,3)
+                    arrayCxCj = crearMatrizCeros(filas,columnaFase2,2)
+                    arrayBi = crearMatrizCeros(filas,columnaFase2,2)
+                    arrayXb = crearMatrizCeros(filas,columnaFase2,2)
+
+                    arrayCj,arrayNombreVariables,arrayXb,arrayCx,arrayZjCj,arrayCxCj,arrayBi,resultadoZ =llenarDatosTablasFase1Minimizacion(arrayCj,arrayNombreVariables,arrayXb,arrayCx,arrayZjCj,arrayCxCj,arrayBi,filaPivote,columnaPivote,valorPivote,arrayTablasFaseDos,posTablaFase2)
+                    
+                    arrayAuxGuardarTabla = []
+                    arrayAuxGuardarTabla = [arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ]
+                    arrayTablasFaseDos.append(arrayAuxGuardarTabla)
+                    posTablaFase2 += 1
+                    #validar si hay puntos positivos en el arreglo ZjCj
+                    contArrayZjCJPositivos = validarZjCjMinimizacion(arrayZjCj)
+                    print(contArrayZjCJPositivos)
+                print(arrayTablasFaseDos)
+            else:
+                print("problema indefinido, sin solucion")

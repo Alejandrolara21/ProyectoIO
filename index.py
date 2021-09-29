@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 plt.switch_backend('agg')
 
 from MetodoGrafico import *
-from MetodoSimplex import *
+
 app = Flask(__name__)
 
 @app.route('/')
