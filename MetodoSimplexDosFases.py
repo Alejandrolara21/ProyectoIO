@@ -333,6 +333,7 @@ def definirNuevaCxCj(arrayNombreVariables, arrayXb,arrayCj):
 
 def fase2Minimizacion(resultadoZ,arrayAuxGuardarTabla,arrayXb,arrayBi,arrayFO,variables,filas):
     mensaje= ""
+    arrayPivoteAux = []
     if(resultadoZ == 0):
         arrayTablasFaseDos = []
         posTablaFase2 = 0
@@ -350,6 +351,8 @@ def fase2Minimizacion(resultadoZ,arrayAuxGuardarTabla,arrayXb,arrayBi,arrayFO,va
 
         while(contArrayZjCJPositivos > 0):
             filaPivote,columnaPivote = puntoPivoteMinimizacion(arrayBi,arrayCx,arrayZjCj)
+
+            arrayPivoteAux.append([filaPivote,columnaPivote])
 
             valorPivote = arrayCx[filaPivote][columnaPivote]
             arrayCx = crearMatrizCeros(filas,columnaFase2,1)
@@ -370,10 +373,11 @@ def fase2Minimizacion(resultadoZ,arrayAuxGuardarTabla,arrayXb,arrayBi,arrayFO,va
         mensaje ="Problema indefinido, sin solucion"
         arrayTablasFaseDos = []
     
-    return mensaje,arrayTablasFaseDos
+    return mensaje,arrayTablasFaseDos,arrayPivoteAux
 
 def fase2Maximizacion(resultadoZ,arrayAuxGuardarTabla,arrayXb,arrayBi,arrayFO,variables,filas):
     mensaje= ""
+    arrayPivoteAux = []
     if(resultadoZ == 0):
         arrayTablasFaseDos = []
         posTablaFase2 = 0
@@ -391,6 +395,8 @@ def fase2Maximizacion(resultadoZ,arrayAuxGuardarTabla,arrayXb,arrayBi,arrayFO,va
         contBand = 0
         while(contArrayZjCJPositivos > 0):
             filaPivote,columnaPivote = puntoPivoteMaximizacion(arrayBi,arrayCx,arrayZjCj)
+
+            arrayPivoteAux.append([filaPivote,columnaPivote])
 
             valorPivote = arrayCx[filaPivote][columnaPivote]
             arrayCx = crearMatrizCeros(filas,columnaFase2,1)
@@ -415,12 +421,15 @@ def fase2Maximizacion(resultadoZ,arrayAuxGuardarTabla,arrayXb,arrayBi,arrayFO,va
         arrayTablasFaseDos=[]
         mensaje ="problema indefinido, sin solucion"
     
-    return mensaje,arrayTablasFaseDos
+    return mensaje,arrayTablasFaseDos,arrayPivoteAux
 
 def fase1Minimizacion(contArrayZjCJPositivos,posTablaFase1,arrayBi,arrayCx,arrayZjCj,arrayCj,arrayNombreVariables,arrayAuxTablas,filas,columnaFase1):
+    arrayPivoteAux = []
     #Realiza las tablas mientras que haya puntos positivos
     while(contArrayZjCJPositivos > 0):
         filaPivote,columnaPivote = puntoPivoteMinimizacion(arrayBi,arrayCx,arrayZjCj)
+
+        arrayPivoteAux.append([filaPivote,columnaPivote])
 
         valorPivote = arrayCx[filaPivote][columnaPivote]
         arrayCx = crearMatrizCeros(filas,columnaFase1,1)
@@ -438,12 +447,15 @@ def fase1Minimizacion(contArrayZjCJPositivos,posTablaFase1,arrayBi,arrayCx,array
         #validar si hay puntos positivos en el arreglo ZjCj
         contArrayZjCJPositivos = validarZjCjMinimizacion(arrayZjCj)
 
-    return arrayAuxGuardarTabla,arrayAuxTablas,arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ
+    return arrayAuxGuardarTabla,arrayAuxTablas,arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ,arrayPivoteAux
 
 def fase1Maximizacion(contArrayZjCJPositivos,posTablaFase1,arrayBi,arrayCx,arrayZjCj,arrayCj,arrayNombreVariables,arrayAuxTablas,filas,columnaFase1):
     #Realiza las tablas mientras que haya puntos positivos
+    arrayPivoteAux = []
     while(contArrayZjCJPositivos > 0):
         filaPivote,columnaPivote = puntoPivoteMaximizacion(arrayBi,arrayCx,arrayZjCj)
+
+        arrayPivoteAux.append([filaPivote,columnaPivote])
 
         valorPivote = arrayCx[filaPivote][columnaPivote]
         arrayCx = crearMatrizCeros(filas,columnaFase1,1)
@@ -461,7 +473,7 @@ def fase1Maximizacion(contArrayZjCJPositivos,posTablaFase1,arrayBi,arrayCx,array
         #validar si hay puntos positivos en el arreglo ZjCj
         contArrayZjCJPositivos = validarZjCjMaximizacion(arrayZjCj)
 
-    return arrayAuxGuardarTabla,arrayAuxTablas,arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ
+    return arrayAuxGuardarTabla,arrayAuxTablas,arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ,arrayPivoteAux
 
 def puntoPivoteMaximizacion(arrayBi,arrayCx,arrayZjCj):
     valor= min(arrayZjCj)

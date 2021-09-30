@@ -40,6 +40,10 @@ h1 {
 h2 {
     font-size: 3.5rem;
 }
+.titulo_fase{
+    text-align: center;
+    margin-bottom: 2rem;
+}
 
 h3 {
     font-size: 2.5rem;
@@ -444,12 +448,13 @@ table {
     font-size: 1rem;
     border-spacing: 0;
     margin: 1rem 0 3rem 0;
+    border-radius: 1rem;
 }
 
 td,
 th {
     text-align: center;
-    border: .1rem solid black;
+    border: .1rem solid lightgrey;
     padding: 1rem 0;
 }
 
@@ -504,7 +509,6 @@ th {
     margin-bottom: 3rem;
 }
 
-
 /*Integrantes*/
 
 .int_texto {
@@ -525,4 +529,17 @@ th {
 
 .fila div p {
     font-size: 1.3rem;
+}
+
+.color_pivote{
+    background-color: rgba(246, 246, 123, 0.808);
+}
+
+.nombre_tabla{
+    background-color: var(--color1);
+    color: white;
+}
+
+.color_resultado_z{
+    background-color: rgba(96, 224, 218, 0.596);
 }
