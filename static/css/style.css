@@ -543,3 +543,7 @@ th {
 .color_resultado_z{
     background-color: rgba(96, 224, 218, 0.596);
 }
+
+.resultado_fase2{
+    margin: 2rem 0;
+}

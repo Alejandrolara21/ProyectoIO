@@ -35,21 +35,21 @@
             <tbody>
                 {%for i in range(arrayCategoriaFO | length):%} {%if (arrayCategoriaFO[i] == 0):%}
                 <tr class="color_rojo">
-                    <td><span class="cambiar">{{arrayValorObjetivo[i][0]}}</span><span class="ocultar hidden">{{fraccionesArray[i][0]}}</span></td>
-                    <td><span class="cambiar">{{arrayValorObjetivo[i][1]}}</span><span class="ocultar hidden">{{fraccionesArray[i][1]}}</span></td>
-                    <td><span class="cambiar">{{arrayValorObjetivo[i][2]}}</span><span class="ocultar hidden">{{fraccionesArray[i][2]}}</span></td> 
+                    <td><span class="ocultar hidden">{{arrayValorObjetivo[i][0]}}</span><span class="cambiar">{{fraccionesArray[i][0]}}</span></td>
+                    <td><span class="ocultar hidden">{{arrayValorObjetivo[i][1]}}</span><span class="cambiar">{{fraccionesArray[i][1]}}</span></td>
+                    <td><span class="ocultar hidden">{{arrayValorObjetivo[i][2]}}</span><span class="cambiar">{{fraccionesArray[i][2]}}</span></td> 
                 </tr>
                 {%endif%} {%if (arrayCategoriaFO[i] == 1):%}
                 <tr class="color_blanco">
-                    <td><span class="cambiar">{{arrayValorObjetivo[i][0]}}</span><span class="ocultar hidden">{{fraccionesArray[i][0]}}</span></td>
-                    <td><span class="cambiar">{{arrayValorObjetivo[i][1]}}</span><span class="ocultar hidden">{{fraccionesArray[i][1]}}</span></td>
-                    <td><span class="cambiar">{{arrayValorObjetivo[i][2]}}</span><span class="ocultar hidden">{{fraccionesArray[i][2]}}</span></td>
+                    <td><span class="ocultar hidden">{{arrayValorObjetivo[i][0]}}</span><span class="cambiar">{{fraccionesArray[i][0]}}</span></td>
+                    <td><span class="ocultar hidden">{{arrayValorObjetivo[i][1]}}</span><span class="cambiar">{{fraccionesArray[i][1]}}</span></td>
+                    <td><span class="ocultar hidden">{{arrayValorObjetivo[i][2]}}</span><span class="cambiar">{{fraccionesArray[i][2]}}</span></td>
                 </tr>
                 {%endif%} {%if (arrayCategoriaFO[i] == 2):%}
                 <tr class="color_verde">
-                    <td><span class="cambiar">{{arrayValorObjetivo[i][0]}}</span><span class="ocultar hidden">{{fraccionesArray[i][0]}}</span></td>
-                    <td><span class="cambiar">{{arrayValorObjetivo[i][1]}}</span><span class="ocultar hidden">{{fraccionesArray[i][1]}}</span></td>
-                    <td><span class="cambiar">{{arrayValorObjetivo[i][2]}}</span><span class="ocultar hidden">{{fraccionesArray[i][2]}}</span></td>
+                    <td><span class="ocultar hidden">{{arrayValorObjetivo[i][0]}}</span><span class="cambiar">{{fraccionesArray[i][0]}}</span></td>
+                    <td><span class="ocultar hidden">{{arrayValorObjetivo[i][1]}}</span><span class="cambiar">{{fraccionesArray[i][1]}}</span></td>
+                    <td><span class="ocultar hidden">{{arrayValorObjetivo[i][2]}}</span><span class="cambiar">{{fraccionesArray[i][2]}}</span></td>
                 </tr>
                 {%endif%} {% endfor %}
             </tbody>
@@ -59,11 +59,11 @@
 
     <div>
         {%for i in range(arrayCategoriaFO | length):%} {%if (arrayCategoriaFO[i] == 2):%}
-            <p class="">Se necesitan <span class="cambiar">{{arrayValorObjetivo[i][0]}}</span><span class="ocultar hidden">{{fraccionesArray[i][0]}}</span> de X y <span class="cambiar">{{arrayValorObjetivo[i][1]}}</span><span class="ocultar hidden">{{fraccionesArray[i][1]}}</span> de Y para un resultado optimo de <span class="cambiar">{{arrayValorObjetivo[i][2]}}</span><span class="ocultar hidden">{{fraccionesArray[i][2]}}</span></p>
+            <p class="">Se necesitan <span class="ocultar hidden">{{arrayValorObjetivo[i][0]}}</span><span class="cambiar">{{fraccionesArray[i][0]}}</span> de X y <span class="ocultar hidden">{{arrayValorObjetivo[i][1]}}</span><span class="cambiar">{{fraccionesArray[i][1]}}</span> de Y para un resultado optimo de <span class="ocultar hidden">{{arrayValorObjetivo[i][2]}}</span><span class="cambiar">{{fraccionesArray[i][2]}}</span></p>
         {%endif%} {% endfor %}
     </div>
     <br>
-    <button class="boton boton-cambiar" id="#cambiar">Convertir a fraccion</button>
+    <button class="boton boton-cambiar" id="#cambiar">Convertir a reales</button>
     
 </div>
 {%endblock%}

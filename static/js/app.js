@@ -120,8 +120,8 @@ function fracciones() {
     if (document.querySelector('.boton-cambiar')){
         selectorBoton.addEventListener('click', (e) => {
 
-            if (boton.textContent == 'Convertir a fraccion') {
-                boton.textContent = "Convertir a enteros";
+            if (boton.textContent == 'Convertir a reales') {
+                boton.textContent = "Convertir a fraccion";
     
                 seleccionarSpanCambiar.forEach(item => {
                     item.classList.add('hidden');
@@ -133,7 +133,7 @@ function fracciones() {
     
             } else {
     
-                boton.textContent = 'Convertir a fraccion';
+                boton.textContent = 'Convertir a reales';
     
                 seleccionarSpanCambiar.forEach(item => {
                     item.classList.remove('hidden');
