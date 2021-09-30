@@ -28,7 +28,7 @@ function validarInputs() {
 }
 
 function validarCaracteres(e) {
-    const arrayCaracteresValidos = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '/', '.', ',', '-'];
+    const arrayCaracteresValidos = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '/', '.', '-'];
     const valorInput = e.target.value;
     const arrayValorInput = valorInput.split('');
     let cont = 0;
@@ -47,7 +47,7 @@ function validarCaracteres(e) {
             }
         });
 
-        if (valor === '/' || valor === '.' || valor === ',') {
+        if (valor === '/' || valor === '.') {
             bandValFraccion = validarFraccion(arrayValorInput, indexInput);
         }
 
@@ -99,38 +99,53 @@ function validarFraccion(array, index) {
 }
 
 function fracciones() {
-    const selectorBoton = document.querySelector('.boton-cambiar');
-    const seleccionarSpanOcultar = document.querySelectorAll('.ocultar');
-    const seleccionarSpanCambiar = document.querySelectorAll('.cambiar');
-    const boton = document.getElementById("#cambiar");
     
-    selectorBoton.addEventListener('click', (e) => {
+    let selectorBoton = "";
+    let seleccionarSpanOcultar = [];
+    let seleccionarSpanCambiar = [];
+    let boton = "";
 
-        if (boton.textContent == 'Convertir a fraccion') {
-            boton.textContent = "Convertir a enteros";
+    if (document.querySelector('.boton-cambiar')) {
+        selectorBoton = document.querySelector('.boton-cambiar');
+    }
+    if (document.querySelectorAll('.ocultar')) {
+        seleccionarSpanOcultar = document.querySelectorAll('.ocultar');
+    }
+    if (document.querySelectorAll('.cambiar')) {
+        seleccionarSpanCambiar = document.querySelectorAll('.cambiar');
+    }
+    if (document.getElementById("#cambiar")) {
+        boton = document.getElementById("#cambiar");
+    }
+    if (document.querySelector('.boton-cambiar')){
+        selectorBoton.addEventListener('click', (e) => {
 
-            seleccionarSpanCambiar.forEach(item => {
-                item.classList.add('hidden');
-            })
-
-            seleccionarSpanOcultar.forEach(item => {
-                item.classList.remove('hidden');
-            })
-
-        } else {
-
-            boton.textContent = 'Convertir a fraccion'
-
-            seleccionarSpanCambiar.forEach(item => {
-                item.classList.remove('hidden');
-            })
-
-            seleccionarSpanOcultar.forEach(item => {
-                item.classList.add('hidden');
-            })
-
-        }
-
-    })
+            if (boton.textContent == 'Convertir a fraccion') {
+                boton.textContent = "Convertir a enteros";
+    
+                seleccionarSpanCambiar.forEach(item => {
+                    item.classList.add('hidden');
+                })
+    
+                seleccionarSpanOcultar.forEach(item => {
+                    item.classList.remove('hidden');
+                })
+    
+            } else {
+    
+                boton.textContent = 'Convertir a fraccion';
+    
+                seleccionarSpanCambiar.forEach(item => {
+                    item.classList.remove('hidden');
+                })
+    
+                seleccionarSpanOcultar.forEach(item => {
+                    item.classList.add('hidden');
+                })
+    
+            }
+    
+        });
+    }
 
 }

@@ -1,17 +1,17 @@
 {% extends "layout.html"%} {% block body%}
 <div class="contenedor seccion">
+    <button class="boton boton-cambiar" id="#cambiar">Convertir a fraccion</button>
     <h2 class="titulo_fase">FASE 1</h2>
     {% for i in range(arrayTablasFase1 | length):%}
     <div style="overflow-x:auto;">
         <table class="tabla_datos" >
             <thead>
-    
             </thead>
             <tbody>
                 <tr>
                     <td><b>Cj</b></td>
                     {% for k in range(arrayTablasFase1[i][4] | length):%}
-                    <td>{{arrayTablasFase1[i][4][k]}}</td>
+                    <td><span class="cambiar">{{arrayTablasFase1[i][4][k]}}</span><span class="ocultar hidden">{{arrayFraccionesFase1[i][4][k]}}</span></td>
                     {% endfor %}
                     <td colspan="2" class="nombre_tabla">TABLA{{i+1}}</td>
                 </tr>
@@ -26,36 +26,36 @@
                 {% for k in range(arrayTablasFase1[i][5] | length): %}
                 <tr>
                     {% if(arrayPivoteFase1[i][0]==k): %}
-                        <td class="color_pivote">{{arrayTablasFase1[i][5][k]}}</td>
+                        <td class="color_pivote"><span class="cambiar">{{arrayTablasFase1[i][5][k]}}</span><span class="ocultar hidden">{{arrayFraccionesFase1[i][5][k]}}</span></td>
                         {% for z in range(arrayTablasFase1[i][1][k] | length):%}
                         {% if(arrayPivoteFase1[i][1]==z or arrayPivoteFase1[i][0]==k): %}
-                        <td class="color_pivote">{{arrayTablasFase1[i][1][k][z]}}</td>
+                        <td class="color_pivote"><span class="cambiar">{{arrayTablasFase1[i][1][k][z]}}</span><span class="ocultar hidden">{{arrayFraccionesFase1[i][1][k][z]}}</span></td>
                         {% else: %}
-                        <td>{{arrayTablasFase1[i][1][k][z]}}</td>
+                        <td><span class="cambiar">{{arrayTablasFase1[i][1][k][z]}}</span><span class="ocultar hidden">{{arrayFraccionesFase1[i][1][k][z]}}</span></td>
                         {% endif %}
                         {% endfor %}
-                        <td class="color_pivote">{{arrayTablasFase1[i][2][k]}}</td>
-                        <td class="color_pivote">{{arrayTablasFase1[i][3][k]}}</td>
+                        <td class="color_pivote"><span class="cambiar">{{arrayTablasFase1[i][2][k]}}</span><span class="ocultar hidden">{{arrayFraccionesFase1[i][2][k]}}</span></td>
+                        <td class="color_pivote"><span class="cambiar">{{arrayTablasFase1[i][3][k]}}</span><span class="ocultar hidden">{{arrayFraccionesFase1[i][3][k]}}</span></td>
                     {% else: %}
-                        <td>{{arrayTablasFase1[i][5][k]}}</td>
+                        <td><span class="cambiar">{{arrayTablasFase1[i][5][k]}}</span><span class="ocultar hidden">{{arrayFraccionesFase1[i][5][k]}}</span></td>
                         {% for z in range(arrayTablasFase1[i][1][k] | length):%}
                         {% if(arrayPivoteFase1[i][1]==z or arrayPivoteFase1[i][0]==k): %}
-                        <td class="color_pivote">{{arrayTablasFase1[i][1][k][z]}}</td>
+                        <td class="color_pivote"><span class="cambiar">{{arrayTablasFase1[i][1][k][z]}}</span><span class="ocultar hidden">{{arrayFraccionesFase1[i][1][k][z]}}</span></td>
                         {% else: %}
-                        <td>{{arrayTablasFase1[i][1][k][z]}}</td>
+                        <td><span class="cambiar">{{arrayTablasFase1[i][1][k][z]}}</span><span class="ocultar hidden">{{arrayFraccionesFase1[i][1][k][z]}}</span></td>
                         {% endif %}
                         {% endfor %}
-                        <td>{{arrayTablasFase1[i][2][k]}}</td>
-                        <td>{{arrayTablasFase1[i][3][k]}}</td>
+                        <td><span class="cambiar">{{arrayTablasFase1[i][2][k]}}</span><span class="ocultar hidden">{{arrayFraccionesFase1[i][2][k]}}</span></td>
+                        <td><span class="cambiar">{{arrayTablasFase1[i][3][k]}}</span><span class="ocultar hidden">{{arrayFraccionesFase1[i][3][k]}}</span></td>
                     {% endif %}
                 </tr>
                 {% endfor %}
                 <tr>
                     <td><b>Zj-CJ</b></td>
                     {% for z in range(arrayTablasFase1[i][6] | length):%}
-                    <td>{{arrayTablasFase1[i][6][z]}}</td>
+                    <td><span class="cambiar">{{arrayTablasFase1[i][6][z]}}</span><span class="ocultar hidden">{{arrayFraccionesFase1[i][6][z]}}</span></td>
                     {% endfor %}
-                    <td colspan="2" class="color_resultado_z"><b>Z = </b>{{arrayTablasFase1[i][7]}}</td>
+                    <td colspan="2" class="color_resultado_z"><span class="cambiar"><b>Z = </b>{{arrayTablasFase1[i][7]}}</span><span class="ocultar hidden"><b>Z = </b>{{arrayFraccionesFase1[i][7]}}</span></td>
                 </tr>
             </tbody>
         </table>
@@ -64,62 +64,63 @@
 
     <h2 class="titulo_fase">FASE 2</h2>
     {% for i in range(arrayTablasFase2 | length):%}
-    <table class="tabla_datos">
-        <thead>
-
-        </thead>
-        <tbody>
-            <tr>
-                <td><b>Cj</b></td>
-                {% for k in range(arrayTablasFase2[i][4] | length):%}
-                <td>{{arrayTablasFase2[i][4][k]}}</td>
+    <div style="overflow-x:auto;">
+        <table class="tabla_datos" >
+            <thead>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><b>Cj</b></td>
+                    {% for k in range(arrayTablasFase2[i][4] | length):%}
+                    <td><span class="cambiar">{{arrayTablasFase2[i][4][k]}}</span><span class="ocultar hidden">{{arrayFraccionesFase2[i][4][k]}}</span></td>
+                    {% endfor %}
+                    <td colspan="2" class="nombre_tabla">TABLA{{i+1}}</td>
+                </tr>
+                <tr>
+                    <td><b>Cx</b></td>
+                    {% for k in range(arrayTablasFase2[i][0] | length):%}
+                    <td><b>{{arrayTablasFase2[i][0][k]}}</b></td>
+                    {% endfor %}
+                    <td><b>Xb</b></td>
+                    <td><b>bi</b></td>
+                </tr>
+                {% for k in range(arrayTablasFase2[i][5] | length): %}
+                <tr>
+                    {% if(arrayPivoteFase2[i][0]==k): %}
+                        <td class="color_pivote"><span class="cambiar">{{arrayTablasFase2[i][5][k]}}</span><span class="ocultar hidden">{{arrayFraccionesFase2[i][5][k]}}</span></td>
+                        {% for z in range(arrayTablasFase2[i][1][k] | length):%}
+                        {% if(arrayPivoteFase2[i][1]==z or arrayPivoteFase2[i][0]==k): %}
+                        <td class="color_pivote"><span class="cambiar">{{arrayTablasFase2[i][1][k][z]}}</span><span class="ocultar hidden">{{arrayFraccionesFase2[i][1][k][z]}}</span></td>
+                        {% else: %}
+                        <td><span class="cambiar">{{arrayTablasFase2[i][1][k][z]}}</span><span class="ocultar hidden">{{arrayFraccionesFase2[i][1][k][z]}}</span></td>
+                        {% endif %}
+                        {% endfor %}
+                        <td class="color_pivote"><span class="cambiar">{{arrayTablasFase2[i][2][k]}}</span><span class="ocultar hidden">{{arrayFraccionesFase2[i][2][k]}}</span></td>
+                        <td class="color_pivote"><span class="cambiar">{{arrayTablasFase2[i][3][k]}}</span><span class="ocultar hidden">{{arrayFraccionesFase2[i][3][k]}}</span></td>
+                    {% else: %}
+                        <td><span class="cambiar">{{arrayTablasFase2[i][5][k]}}</span><span class="ocultar hidden">{{arrayFraccionesFase2[i][5][k]}}</span></td>
+                        {% for z in range(arrayTablasFase2[i][1][k] | length):%}
+                        {% if(arrayPivoteFase2[i][1]==z or arrayPivoteFase2[i][0]==k): %}
+                        <td class="color_pivote"><span class="cambiar">{{arrayTablasFase2[i][1][k][z]}}</span><span class="ocultar hidden">{{arrayFraccionesFase2[i][1][k][z]}}</span></td>
+                        {% else: %}
+                        <td><span class="cambiar">{{arrayTablasFase2[i][1][k][z]}}</span><span class="ocultar hidden">{{arrayFraccionesFase2[i][1][k][z]}}</span></td>
+                        {% endif %}
+                        {% endfor %}
+                        <td><span class="cambiar">{{arrayTablasFase2[i][2][k]}}</span><span class="ocultar hidden">{{arrayFraccionesFase2[i][2][k]}}</span></td>
+                        <td><span class="cambiar">{{arrayTablasFase2[i][3][k]}}</span><span class="ocultar hidden">{{arrayFraccionesFase2[i][3][k]}}</span></td>
+                    {% endif %}
+                </tr>
                 {% endfor %}
-                <td colspan="2" class="nombre_tabla">TABLA{{i+1}}</td>
-            </tr>
-            <tr>
-                <td><b>Cx</b></td>
-                {% for k in range(arrayTablasFase2[i][0] | length):%}
-                <td><b>{{arrayTablasFase2[i][0][k]}}</b></td>
-                {% endfor %}
-                <td><b>Xb</b></td>
-                <td><b>bi</b></td>
-            </tr>
-            {% for k in range(arrayTablasFase2[i][5] | length):%}
-            <tr>
-                {% if(arrayPivoteFase2[i][0]==k): %}
-                <td class="color_pivote">{{arrayTablasFase2[i][5][k]}}</td>
-                {% for z in range(arrayTablasFase2[i][1][k] | length):%}
-                {% if(arrayPivoteFase2[i][1]==z or arrayPivoteFase2[i][0]==k): %}
-                <td class="color_pivote">{{arrayTablasFase2[i][1][k][z]}}</td>
-                {% else: %}
-                <td>{{arrayTablasFase2[i][1][k][z]}}</td>
-                {% endif %}
-                {% endfor %}
-                <td class="color_pivote">{{arrayTablasFase2[i][2][k]}}</td>
-                <td class="color_pivote">{{arrayTablasFase2[i][3][k]}}</td>
-            {% else: %}
-                <td>{{arrayTablasFase2[i][5][k]}}</td>
-                {% for z in range(arrayTablasFase2[i][1][k] | length):%}
-                {% if(arrayPivoteFase2[i][1]==z or arrayPivoteFase2[i][0]==k): %}
-                <td class="color_pivote">{{arrayTablasFase2[i][1][k][z]}}</td>
-                {% else: %}
-                <td>{{arrayTablasFase2[i][1][k][z]}}</td>
-                {% endif %}
-                {% endfor %}
-                <td>{{arrayTablasFase2[i][2][k]}}</td>
-                <td>{{arrayTablasFase2[i][3][k]}}</td>
-            {% endif %}
-            </tr>
-            {% endfor %}
-            <tr>
-                <td><b>Zj-CJ</b></td>
-                {% for z in range(arrayTablasFase2[i][6] | length):%}
-                <td>{{arrayTablasFase2[i][6][z]}}</td>
-                {% endfor %}
-                <td colspan="2" class="color_resultado_z"><b>Z = </b>{{arrayTablasFase2[i][7]}}</td>
-            </tr>
-        </tbody>
-    </table>
+                <tr>
+                    <td><b>Zj-CJ</b></td>
+                    {% for z in range(arrayTablasFase2[i][6] | length):%}
+                    <td><span class="cambiar">{{arrayTablasFase2[i][6][z]}}</span><span class="ocultar hidden">{{arrayFraccionesFase2[i][6][z]}}</span></td>
+                    {% endfor %}
+                    <td colspan="2" class="color_resultado_z"><span class="cambiar"><b>Z = </b>{{arrayTablasFase2[i][7]}}</span><span class="ocultar hidden"><b>Z = </b>{{arrayFraccionesFase2[i][7]}}</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
     {% endfor %}
 
 </div>

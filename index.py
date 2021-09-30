@@ -89,7 +89,64 @@ def realizarProcesoDosFases():
     arrayPivoteFase1.append([-1,-1])
     arrayPivoteFase2.append([-1,-1])
 
-    return render_template("dosFases.html",arrayTablasFase1=arrayTablasFase1,arrayTablasFase2=arrayTablasFase2,mensaje=mensaje,arrayFO=arrayFO,arrayPivoteFase1=arrayPivoteFase1,arrayPivoteFase2=arrayPivoteFase2)
+    
+    arrayFraccionesFase1 = []
+    arrayFraccionesFase2 = []
+
+    arrayFraccionesFase1 = pasarFraccionariosFases(arrayTablasFase1)
+    arrayFraccionesFase2 = pasarFraccionariosFases(arrayTablasFase2)
+    
+    #arrayUltimaTablaFase1 = [arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ]
+    return render_template("dosFases.html",arrayTablasFase1=arrayTablasFase1,arrayTablasFase2=arrayTablasFase2,mensaje=mensaje,arrayFO=arrayFO,arrayPivoteFase1=arrayPivoteFase1,arrayPivoteFase2=arrayPivoteFase2, arrayFraccionesFase1=arrayFraccionesFase1, arrayFraccionesFase2=arrayFraccionesFase2)
+
+def pasarFraccionariosFases(arrayFase):
+    arrayFraccionesFase = []
+    for i in range(len(arrayFase)):
+        auxArrayNombreVariables = []
+        auxArrayCx = []
+        auxArrayCj = []
+        auxArrayXb = []
+        auxArrayBi = []
+        auxArrayCxCj = []
+        auxArrayZjCj = []
+        auxResultadoZ = 0
+        for j in range(len(arrayFase[i][0])):
+            auxArrayNombreVariables.append(arrayFase[i][0][j])
+    
+        for j in range(len(arrayFase[i][1])):
+            arrayAuxFila = []
+        
+            for k in range(len(arrayFase[i][1][j])):
+                aux1 = str(Fraction(arrayFase[i][1][j][k]).limit_denominator())
+                arrayAuxFila.append(aux1)
+            auxArrayCx.append(arrayAuxFila)
+        
+        for j in range(len(arrayFase[i][2])):
+            auxArrayXb.append(arrayFase[i][2][j])
+        
+        for j in range(len(arrayFase[i][3])):
+            aux1 = str(Fraction(arrayFase[i][3][j]).limit_denominator())
+            auxArrayBi.append(aux1)
+        
+        for j in range(len(arrayFase[i][4])):
+            aux1 = str(Fraction(arrayFase[i][4][j]).limit_denominator())
+            auxArrayCj.append(aux1)
+
+        for j in range(len(arrayFase[i][5])):
+            aux1 = str(Fraction(arrayFase[i][5][j]).limit_denominator())
+            auxArrayCxCj.append(aux1)
+
+        for j in range(len(arrayFase[i][6])):
+            aux1 = str(Fraction(arrayFase[i][6][j]).limit_denominator())
+            auxArrayZjCj.append(aux1)
+        
+        auxResultadoZ = str(Fraction(arrayFase[i][7]).limit_denominator())
+
+        auxTablaFase = []
+        auxTablaFase = [auxArrayNombreVariables, auxArrayCx, auxArrayXb, auxArrayBi, auxArrayCj, auxArrayCxCj, auxArrayZjCj, auxResultadoZ]
+        arrayFraccionesFase.append(auxTablaFase)
+    return arrayFraccionesFase
+
 
 @app.route('/metodoGrafico')
 def metodoGrafico():
