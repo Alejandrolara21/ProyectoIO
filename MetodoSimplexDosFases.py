@@ -44,8 +44,12 @@ def hallarZjCj(arrayCx,arrayCxCj,arrayCj):
         sumador = 0
         for i in range(len(arrayCx)):
             sumador += arrayCxCj[i]*arrayCx[i][j]
-            #sumador = round(sumador,6)
-        arrayZjCj.append(sumador-arrayCj[j])
+
+        if (arrayCj[j]>=0):
+            arrayZjCj.append(sumador-arrayCj[j])
+        else:
+            arrayZjCj.append(sumador+arrayCj[j])
+
     return arrayZjCj
 
 # Permite obtener el valor de Z
@@ -118,7 +122,6 @@ def definirMatrizInicial(arrayRestricciones, variables, restricciones):
                     posicionVariableArtificial += 1
                 else:
                     arrayNormalizado[i][j] = 1
-
 
     # Juntar la matriz variables/restricciones con la matriz normalizada
     for i in range(len(arrayRestricciones)):
@@ -217,15 +220,16 @@ def definirArreglosInicialesTabla(arrayRestricciones, restricciones,cantVariable
 def puntoPivoteMinimizacion(arrayBi, arrayCx,arrayZjCj):
     valor = max(arrayZjCj)
     columna = arrayZjCj.index(valor)
-    arrayAuxFila = []
+    arrayAuxFila = []   
     
     for i in range(len(arrayCx)):
         resultado = 0
         try:
             resultado = arrayBi[i]/arrayCx[i][columna]
+            arrayAuxFila.append(resultado)
         except:
-            print("error")
-        arrayAuxFila.append(resultado)
+            arrayAuxFila.append(resultado)
+
     valorFila =  max(arrayAuxFila)
     fila = arrayAuxFila.index(valorFila)
 
@@ -250,19 +254,21 @@ def llenarDatosTablas(arrayCj,arrayNombreVariables,arrayXb,arrayCx,arrayZjCj,arr
     for i in range(len(arrayAuxTablas[posTabla][1])):
         if(i == filaPivote):
             for j in range(len(arrayAuxTablas[posTabla][1][i])):
-                arrayCx[i][j] = arrayAuxTablas[posTabla][1][i][j]/valorPivote
-                #arrayCx[i][j] = round(arrayCx[i][j],6)
-            arrayBi[i] = arrayAuxTablas[posTabla][3][i]/valorPivote
-            #arrayBi[i] = round(arrayBi[i],6)
+                try:
+                    arrayCx[i][j] = arrayAuxTablas[posTabla][1][i][j]/valorPivote
+                except:
+                    arrayCx[i][j] = 0
+            try:
+                arrayBi[i] = arrayAuxTablas[posTabla][3][i]/valorPivote
+            except:
+                arrayBi[i] = 0
     for i in range(len(arrayAuxTablas[posTabla][1])):
         if(i != filaPivote):
             datoPasarCero = (arrayAuxTablas[posTabla][1][i][columnaPivote] *-1)
-
+        
             for j in range(len(arrayAuxTablas[posTabla][1][i])):
                 arrayCx[i][j] = (arrayCx[filaPivote][j]*datoPasarCero)+arrayAuxTablas[posTabla][1][i][j]
-                #arrayCx[i][j] = round(arrayCx[i][j],6)
             arrayBi[i] = (arrayBi[filaPivote]*datoPasarCero)+arrayAuxTablas[posTabla][3][i]
-            #arrayBi[i] = round(arrayBi[i],6)
     #SOBREESCRBIR ARREGLO Xb
     arrayXb[filaPivote] = arrayNombreVariables[columnaPivote] #######-------------
     for i in range(len(arrayXb)):
@@ -274,7 +280,6 @@ def llenarDatosTablas(arrayCj,arrayNombreVariables,arrayXb,arrayCx,arrayZjCj,arr
     for i in range(len(arrayCxCj)):
         if( i != filaPivote):
             arrayCxCj[i] = arrayAuxTablas[posTabla][5][i]
-            #arrayCxCj[i] = round(arrayCxCj[i],6)
 
     #HALLAR ZjCj
     auxArrayZjCj = []
@@ -392,7 +397,7 @@ def fase2Maximizacion(resultadoZ,arrayAuxGuardarTabla,arrayXb,arrayBi,arrayFO,va
         arrayTablasFaseDos.append(arrayAuxGuardarTabla)
 
         contArrayZjCJPositivos = validarZjCjMaximizacion(arrayZjCj)
-        contBand = 0
+
         while(contArrayZjCJPositivos > 0):
             filaPivote,columnaPivote = puntoPivoteMaximizacion(arrayBi,arrayCx,arrayZjCj)
 
@@ -411,12 +416,8 @@ def fase2Maximizacion(resultadoZ,arrayAuxGuardarTabla,arrayXb,arrayBi,arrayFO,va
             arrayAuxGuardarTabla = [arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ]
             arrayTablasFaseDos.append(arrayAuxGuardarTabla)
             posTablaFase2 += 1
-            contBand += 1
             #validar si hay puntos positivos en el arreglo ZjCj
             contArrayZjCJPositivos = validarZjCjMaximizacion(arrayZjCj)
-
-            if(contBand == 5):
-                contArrayZjCJPositivos = 0
     else:
         arrayTablasFaseDos=[]
         mensaje ="problema indefinido, sin solucion"
@@ -426,6 +427,7 @@ def fase2Maximizacion(resultadoZ,arrayAuxGuardarTabla,arrayXb,arrayBi,arrayFO,va
 def fase1Minimizacion(contArrayZjCJPositivos,posTablaFase1,arrayBi,arrayCx,arrayZjCj,arrayCj,arrayNombreVariables,arrayAuxTablas,filas,columnaFase1):
     arrayPivoteAux = []
     #Realiza las tablas mientras que haya puntos positivos
+    band = 0
     while(contArrayZjCJPositivos > 0):
         filaPivote,columnaPivote = puntoPivoteMinimizacion(arrayBi,arrayCx,arrayZjCj)
 
@@ -446,12 +448,15 @@ def fase1Minimizacion(contArrayZjCJPositivos,posTablaFase1,arrayBi,arrayCx,array
         posTablaFase1 += 1
         #validar si hay puntos positivos en el arreglo ZjCj
         contArrayZjCJPositivos = validarZjCjMinimizacion(arrayZjCj)
+        if (band == 10):
+            contArrayZjCJPositivos = 0
 
     return arrayAuxGuardarTabla,arrayAuxTablas,arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ,arrayPivoteAux
 
 def fase1Maximizacion(contArrayZjCJPositivos,posTablaFase1,arrayBi,arrayCx,arrayZjCj,arrayCj,arrayNombreVariables,arrayAuxTablas,filas,columnaFase1):
     #Realiza las tablas mientras que haya puntos positivos
     arrayPivoteAux = []
+    band = 0
     while(contArrayZjCJPositivos > 0):
         filaPivote,columnaPivote = puntoPivoteMaximizacion(arrayBi,arrayCx,arrayZjCj)
 
@@ -472,6 +477,9 @@ def fase1Maximizacion(contArrayZjCJPositivos,posTablaFase1,arrayBi,arrayCx,array
         posTablaFase1 += 1
         #validar si hay puntos positivos en el arreglo ZjCj
         contArrayZjCJPositivos = validarZjCjMaximizacion(arrayZjCj)
+        band += 1
+        if (band == 10):
+            contArrayZjCJPositivos = 0
 
     return arrayAuxGuardarTabla,arrayAuxTablas,arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ,arrayPivoteAux
 
@@ -482,7 +490,12 @@ def puntoPivoteMaximizacion(arrayBi,arrayCx,arrayZjCj):
     arrayAuxFila = []
     
     for i in range(len(arrayCx)):
-        arrayAuxFila.append(arrayBi[i]/arrayCx[i][columna])
+        resultado = 0
+        try:
+            resultado = arrayBi[i]/arrayCx[i][columna]
+            arrayAuxFila.append(resultado)
+        except:
+            arrayAuxFila.append(resultado)
 
     valorFila =  max(arrayAuxFila)
     fila = arrayAuxFila.index(valorFila)
@@ -490,7 +503,17 @@ def puntoPivoteMaximizacion(arrayBi,arrayCx,arrayZjCj):
     for i in range(len(arrayAuxFila)):
         if(arrayAuxFila[i] < valorFila and arrayAuxFila[i] > 0):
             valorFila = arrayAuxFila[i]
-            fila = i   
+            fila = i 
+
+    if(arrayAuxFila[fila] == 0):
+        valorFila = min(arrayAuxFila)
+        fila = arrayAuxFila.index(valorFila)
+
+        for i in range(len(arrayAuxFila)):
+            if(arrayAuxFila[i] > valorFila and arrayAuxFila[i] < 0):
+                valorFila = arrayAuxFila[i]
+                fila = i 
+
     return fila,columna
 
 def validarZjCjMaximizacion(arrayZjCj):
