@@ -74,17 +74,27 @@ def realizarProcesoDosFases():
         #FASE 1
         if(operacion ==1):
             #Maximizacion
+            mensaje = ""
             contArrayZjCJPositivos = validarZjCjMaximizacion(arrayZjCj)
-            arrayUltimaTablaFase1,arrayTablasFase1,arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ,arrayPivoteFase1 = fase1Maximizacion(contArrayZjCJPositivos,posTablaFase1,arrayBi,arrayCx,arrayZjCj,arrayCj,arrayNombreVariables,arrayTablasFase1,filas,columnaFase1)
-            #FASE 2
-            mensaje,arrayTablasFase2,arrayPivoteFase2 = fase2Maximizacion(resultadoZ,arrayUltimaTablaFase1,arrayXb,arrayBi,arrayFO,cantidadVariables,filas)
+            if(contArrayZjCJPositivos > 0):
+                arrayUltimaTablaFase1,arrayTablasFase1,arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ,arrayPivoteFase1 = fase1Maximizacion(contArrayZjCJPositivos,posTablaFase1,arrayBi,arrayCx,arrayZjCj,arrayCj,arrayNombreVariables,arrayTablasFase1,filas,columnaFase1)
+                #FASE 2
+                mensaje,arrayTablasFase2,arrayPivoteFase2 = fase2Maximizacion(resultadoZ,arrayUltimaTablaFase1,arrayXb,arrayBi,arrayFO,cantidadVariables,filas)
+            else:
+                mensaje ="Problema indefinido, sin solucion"
+                arrayTablasFaseDos = []
+
         elif(operacion == 2):
             #Minimizacion
             #validar si hay puntos positivos en el arreglo ZjCj
             contArrayZjCJPositivos = validarZjCjMinimizacion(arrayZjCj)
-            arrayUltimaTablaFase1,arrayTablasFase1,arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ,arrayPivoteFase1 = fase1Minimizacion(contArrayZjCJPositivos,posTablaFase1,arrayBi,arrayCx,arrayZjCj,arrayCj,arrayNombreVariables,arrayTablasFase1,filas,columnaFase1)
-            #FASE 2
-            mensaje,arrayTablasFase2,arrayPivoteFase2 = fase2Minimizacion(resultadoZ,arrayUltimaTablaFase1,arrayXb,arrayBi,arrayFO,cantidadVariables,filas)
+            if(contArrayZjCJPositivos > 0):
+                arrayUltimaTablaFase1,arrayTablasFase1,arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ,arrayPivoteFase1 = fase1Minimizacion(contArrayZjCJPositivos,posTablaFase1,arrayBi,arrayCx,arrayZjCj,arrayCj,arrayNombreVariables,arrayTablasFase1,filas,columnaFase1)
+                #FASE 2
+                mensaje,arrayTablasFase2,arrayPivoteFase2 = fase2Minimizacion(resultadoZ,arrayUltimaTablaFase1,arrayXb,arrayBi,arrayFO,cantidadVariables,filas)
+            else:
+                mensaje ="Problema indefinido, sin solucion"
+                arrayTablasFaseDos = []
 
     arrayPivoteFase1.append([-1,-1])
     arrayPivoteFase2.append([-1,-1])
