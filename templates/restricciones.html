@@ -2,19 +2,19 @@
 <div class="contenedor_res">
     <form method="POST" action="{{url_for('realizarProceso')}}">
         {% for i in range(cantidadRestricciones):%}
-        <div class="grid_form_res">
-            <p>{{i+1}})</p>
-            <input name="X{{i}}" type="text" step="any" required>
-            <p>X +</p>
-            <input name="Y{{i}}" type="text" step="any" required>
-            <p>Y</p>
-            <select class="signo_res" name="S{{i}}">
-                <option value="="> = </option>
-                <option selected value="<="> <= </option>
-                <option value=">="> >= </option>
-            </select>
-            <input name="R{{i}}" type="text" step="any" required>
-        </div>
+            <div class="grid_form_res">
+                <p>{{i+1}})</p>
+                <input name="X{{i}}" type="text" step="any" required>
+                <p>X +</p>
+                <input name="Y{{i}}" type="text" step="any" required>
+                <p>Y</p>
+                <select class="signo_res" name="S{{i}}">
+                    <option value="="> = </option>
+                    <option selected value="<="> <= </option>
+                    <option value=">="> >= </option>
+                </select>
+                <input name="R{{i}}" type="text" step="any" required>
+            </div>
         {% endfor%}
         <div class="flex_res">
             <p> X,Y ≥ 0</p>

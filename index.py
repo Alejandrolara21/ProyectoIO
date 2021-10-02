@@ -97,8 +97,16 @@ def realizarProcesoDosFases():
     arrayFraccionesFase2 = pasarFraccionariosFases(arrayTablasFase2)
     tamañoFase2 = len(arrayTablasFase2)-1
 
+
+    arrayFraccionesFO = []
+    for i in range(len(arrayFO)):
+        arrayFraccionesFO.append(str(Fraction(arrayFO[i]).limit_denominator()))
+
+
+
     #arrayUltimaTablaFase1 = [arrayNombreVariables,arrayCx,arrayXb,arrayBi,arrayCj,arrayCxCj,arrayZjCj,resultadoZ]
-    return render_template("dosFases.html",arrayTablasFase1=arrayTablasFase1,arrayTablasFase2=arrayTablasFase2,mensaje=mensaje,arrayFO=arrayFO,arrayPivoteFase1=arrayPivoteFase1,arrayPivoteFase2=arrayPivoteFase2, arrayFraccionesFase1=arrayFraccionesFase1, arrayFraccionesFase2=arrayFraccionesFase2, tamañoFase2=tamañoFase2)
+    return render_template("dosFases.html",arrayTablasFase1=arrayTablasFase1,arrayTablasFase2=arrayTablasFase2,mensaje=mensaje,arrayFO=arrayFO,arrayPivoteFase1=arrayPivoteFase1,arrayPivoteFase2=arrayPivoteFase2, arrayFraccionesFase1=arrayFraccionesFase1, 
+    arrayFraccionesFase2=arrayFraccionesFase2,tamañoFase2=tamañoFase2,arrayFraccionesFO=arrayFraccionesFO,operacion=operacion,cantidadVariables=cantidadVariables,cantidadRestricciones=cantidadRestricciones,arrayRestricciones=arrayRestricciones)
 
 def pasarFraccionariosFases(arrayFase):
     arrayFraccionesFase = []

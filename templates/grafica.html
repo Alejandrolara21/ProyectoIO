@@ -3,17 +3,17 @@
     <div class="funcion_o">
         <h3>Función Objetivo</h3>
         {% if(operacion == "1"):%}
-        <p>Maximizar Z = {{funcionObjetivoX}} X + {{funcionObjetivoY}} Y</p>
+            <p>Maximizar Z = {{funcionObjetivoX}} X + {{funcionObjetivoY}} Y</p>
         {% elif(operacion == "2"):%}
-        <p>Minimizar Z = {{funcionObjetivoX}} X + {{funcionObjetivoY}} Y</p>
+            <p>Minimizar Z = {{funcionObjetivoX}} X + {{funcionObjetivoY}} Y</p>
         {%endif%}
     </div>
     <div class="restricciones">
         <h3>Restricciones</h3>
         {% for i in range(arrayRestricciones | length):%}
-        <div>
-            <p> {{i+1}}) {{arrayRestricciones[i][0]}} X + {{arrayRestricciones[i][1]}} Y {{arrayRestricciones[i][2]}} {{arrayRestricciones[i][3]}}</p>
-        </div>
+            <div>
+                <p> {{i+1}}) {{arrayRestricciones[i][0]}} X + {{arrayRestricciones[i][1]}} Y {{arrayRestricciones[i][2]}} {{arrayRestricciones[i][3]}}</p>
+            </div>
         {%endfor%}
         <p> X,Y ≥ 0</p>
     </div>
@@ -33,37 +33,42 @@
                 </tr>
             </thead>
             <tbody>
-                {%for i in range(arrayCategoriaFO | length):%} {%if (arrayCategoriaFO[i] == 0):%}
-                <tr class="color_rojo">
-                    <td><span class="ocultar hidden">{{arrayValorObjetivo[i][0]}}</span><span class="cambiar">{{fraccionesArray[i][0]}}</span></td>
-                    <td><span class="ocultar hidden">{{arrayValorObjetivo[i][1]}}</span><span class="cambiar">{{fraccionesArray[i][1]}}</span></td>
-                    <td><span class="ocultar hidden">{{arrayValorObjetivo[i][2]}}</span><span class="cambiar">{{fraccionesArray[i][2]}}</span></td> 
-                </tr>
-                {%endif%} {%if (arrayCategoriaFO[i] == 1):%}
-                <tr class="color_blanco">
-                    <td><span class="ocultar hidden">{{arrayValorObjetivo[i][0]}}</span><span class="cambiar">{{fraccionesArray[i][0]}}</span></td>
-                    <td><span class="ocultar hidden">{{arrayValorObjetivo[i][1]}}</span><span class="cambiar">{{fraccionesArray[i][1]}}</span></td>
-                    <td><span class="ocultar hidden">{{arrayValorObjetivo[i][2]}}</span><span class="cambiar">{{fraccionesArray[i][2]}}</span></td>
-                </tr>
-                {%endif%} {%if (arrayCategoriaFO[i] == 2):%}
-                <tr class="color_verde">
-                    <td><span class="ocultar hidden">{{arrayValorObjetivo[i][0]}}</span><span class="cambiar">{{fraccionesArray[i][0]}}</span></td>
-                    <td><span class="ocultar hidden">{{arrayValorObjetivo[i][1]}}</span><span class="cambiar">{{fraccionesArray[i][1]}}</span></td>
-                    <td><span class="ocultar hidden">{{arrayValorObjetivo[i][2]}}</span><span class="cambiar">{{fraccionesArray[i][2]}}</span></td>
-                </tr>
-                {%endif%} {% endfor %}
+                {%for i in range(arrayCategoriaFO | length):%} 
+                    {%if (arrayCategoriaFO[i] == 0):%}
+                    <tr class="color_rojo">
+                        <td><span class="ocultar hidden">{{arrayValorObjetivo[i][0]}}</span><span class="cambiar">{{fraccionesArray[i][0]}}</span></td>
+                        <td><span class="ocultar hidden">{{arrayValorObjetivo[i][1]}}</span><span class="cambiar">{{fraccionesArray[i][1]}}</span></td>
+                        <td><span class="ocultar hidden">{{arrayValorObjetivo[i][2]}}</span><span class="cambiar">{{fraccionesArray[i][2]}}</span></td> 
+                    </tr>
+                    {%endif%} 
+                    {%if (arrayCategoriaFO[i] == 1):%}
+                    <tr class="color_blanco">
+                        <td><span class="ocultar hidden">{{arrayValorObjetivo[i][0]}}</span><span class="cambiar">{{fraccionesArray[i][0]}}</span></td>
+                        <td><span class="ocultar hidden">{{arrayValorObjetivo[i][1]}}</span><span class="cambiar">{{fraccionesArray[i][1]}}</span></td>
+                        <td><span class="ocultar hidden">{{arrayValorObjetivo[i][2]}}</span><span class="cambiar">{{fraccionesArray[i][2]}}</span></td>
+                    </tr>
+                    {%endif%} 
+                    {%if (arrayCategoriaFO[i] == 2):%}
+                    <tr class="color_verde">
+                        <td><span class="ocultar hidden">{{arrayValorObjetivo[i][0]}}</span><span class="cambiar">{{fraccionesArray[i][0]}}</span></td>
+                        <td><span class="ocultar hidden">{{arrayValorObjetivo[i][1]}}</span><span class="cambiar">{{fraccionesArray[i][1]}}</span></td>
+                        <td><span class="ocultar hidden">{{arrayValorObjetivo[i][2]}}</span><span class="cambiar">{{fraccionesArray[i][2]}}</span></td>
+                    </tr>
+                    {%endif%} 
+                {% endfor %}
             </tbody>
         </table>
 
     </div>
 
     <div>
-        {%for i in range(arrayCategoriaFO | length):%} {%if (arrayCategoriaFO[i] == 2):%}
-            <p class="">Se necesitan <span class="ocultar hidden">{{arrayValorObjetivo[i][0]}}</span><span class="cambiar">{{fraccionesArray[i][0]}}</span> de X y <span class="ocultar hidden">{{arrayValorObjetivo[i][1]}}</span><span class="cambiar">{{fraccionesArray[i][1]}}</span> de Y para un resultado optimo de <span class="ocultar hidden">{{arrayValorObjetivo[i][2]}}</span><span class="cambiar">{{fraccionesArray[i][2]}}</span></p>
-        {%endif%} {% endfor %}
+        {%for i in range(arrayCategoriaFO | length):%} 
+            {%if (arrayCategoriaFO[i] == 2):%}
+                <p class="">Se necesitan <span class="ocultar hidden">{{arrayValorObjetivo[i][0]}}</span><span class="cambiar">{{fraccionesArray[i][0]}}</span> de X y <span class="ocultar hidden">{{arrayValorObjetivo[i][1]}}</span><span class="cambiar">{{fraccionesArray[i][1]}}</span> de Y para un resultado optimo de <span class="ocultar hidden">{{arrayValorObjetivo[i][2]}}</span><span class="cambiar">{{fraccionesArray[i][2]}}</span></p>
+            {%endif%} 
+        {% endfor %}
     </div>
     <br>
     <button class="boton boton-cambiar" id="#cambiar">Convertir a reales</button>
-    
 </div>
 {%endblock%}

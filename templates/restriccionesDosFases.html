@@ -4,38 +4,39 @@
         <div class="texto_form_res">
             <label>Función Objetivo:</label>
         </div>
-
         <div class="flex_form">
             {% for i in range(cantidadVariables):%}
-            <div class="input_fo">
-
-                <input name="F{{i}}" type="text" required> {% if(i+1 == cantidadVariables):%}
-                <p>X{{i+1}}</p>
-                {% else:%}
-                <p> X{{i+1}} +</p>
-                {% endif %}
-            </div>
+                <div class="input_fo">
+                    <input name="F{{i}}" type="text" required> 
+                    {% if(i+1 == cantidadVariables):%}
+                        <p>X{{i+1}}</p>
+                    {% else:%}
+                        <p> X{{i+1}} +</p>
+                    {% endif %}
+                </div>
             {% endfor %}
         </div>
         <div class="texto_form_res">
             <label>Restricciones:</label>
         </div>
         {% for i in range(cantidadRestricciones):%}
-        <div class="grid_form_res">
-            <p>{{i+1}})</p>
-            {% for j in range(cantidadVariables):%}
-            <input name="R{{i}}_V{{j}}" type="text" step="any" required> {% if(j+1 == cantidadVariables):%}
-            <p>X{{j+1}}</p>
-            {% else:%}
-            <p> X{{j+1}} +</p>
-            {% endif %} {% endfor%}
-            <select class="signo_res" name="S{{i}}">
-                <option value="3"> = </option>
-                <option selected value="2"> <= </option>
-                <option value="1"> >= </option>
-            </select>
-            <input name="V{{i}}" type="text" step="any" required>
-        </div>
+            <div class="grid_form_res">
+                <p>{{i+1}})</p>
+                {% for j in range(cantidadVariables):%}
+                    <input name="R{{i}}_V{{j}}" type="text" step="any" required> 
+                    {% if(j+1 == cantidadVariables):%}
+                        <p>X{{j+1}}</p>
+                    {% else:%}
+                        <p> X{{j+1}} +</p>
+                    {% endif %} 
+                {% endfor%}
+                <select class="signo_res" name="S{{i}}">
+                    <option value="3"> = </option>
+                    <option selected value="2"> <= </option>
+                    <option value="1"> >= </option>
+                </select>
+                <input name="V{{i}}" type="text" step="any" required>
+            </div>
         {% endfor %}
         <div class="flex_res">
             <p> X,Y ≥ 0</p>

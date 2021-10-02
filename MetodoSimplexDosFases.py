@@ -44,11 +44,7 @@ def hallarZjCj(arrayCx,arrayCxCj,arrayCj):
         sumador = 0
         for i in range(len(arrayCx)):
             sumador += arrayCxCj[i]*arrayCx[i][j]
-
-        if (arrayCj[j]>=0):
-            arrayZjCj.append(sumador-arrayCj[j])
-        else:
-            arrayZjCj.append(sumador+arrayCj[j])
+        arrayZjCj.append(sumador-arrayCj[j])
 
     return arrayZjCj
 
@@ -81,6 +77,18 @@ def ingresarRestricciones(cantRestricciones,cantVariables):
         signoRestriccion = request.form.get(f'S{i}')
         valorRestriccion = request.form.get(f'V{i}')
         valorRestriccion = round(pasarFraccionDecimal(valorRestriccion), 9)
+
+        if(valorRestriccion < 0):
+            valorRestriccion = valorRestriccion*(-1)
+            
+            if(signoRestriccion == "1"):
+                signoRestriccion = "2"
+            elif(signoRestriccion == "2"):
+                signoRestriccion = "1"
+            
+            for z in range(len(arrayAux)):
+                arrayAux[z] = arrayAux[z]*(-1)
+
 
         arrayAux.append(int(signoRestriccion))
         arrayAux.append(float(valorRestriccion))
@@ -456,6 +464,8 @@ def fase1Minimizacion(contArrayZjCJPositivos,posTablaFase1,arrayBi,arrayCx,array
 def fase1Maximizacion(contArrayZjCJPositivos,posTablaFase1,arrayBi,arrayCx,arrayZjCj,arrayCj,arrayNombreVariables,arrayAuxTablas,filas,columnaFase1):
     #Realiza las tablas mientras que haya puntos positivos
     arrayPivoteAux = []
+    arrayAuxGuardarTabla = []
+
     band = 0
     while(contArrayZjCJPositivos > 0):
         filaPivote,columnaPivote = puntoPivoteMaximizacion(arrayBi,arrayCx,arrayZjCj)
@@ -504,15 +514,6 @@ def puntoPivoteMaximizacion(arrayBi,arrayCx,arrayZjCj):
         if(arrayAuxFila[i] < valorFila and arrayAuxFila[i] > 0):
             valorFila = arrayAuxFila[i]
             fila = i 
-
-    if(arrayAuxFila[fila] == 0):
-        valorFila = min(arrayAuxFila)
-        fila = arrayAuxFila.index(valorFila)
-
-        for i in range(len(arrayAuxFila)):
-            if(arrayAuxFila[i] > valorFila and arrayAuxFila[i] < 0):
-                valorFila = arrayAuxFila[i]
-                fila = i 
 
     return fila,columna
 
